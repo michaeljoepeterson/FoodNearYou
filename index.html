@@ -3,17 +3,29 @@
 <head>
 	<title>Food Near You</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	<script type="text/javascript" src="index.js"></script>
+	<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBlwmiO0mheoyegRRXMAvUo5aV7DtgzDQM">
+    </script>
 </head>
 <body>
 	<header role="banner"><h1>Search For Food in your city</h1></header>
-	<main>
-		<form>
+	<main role="main">
+		<form class="submitForm">
 			<label for="foodType">Type of Cuisine:</label>
-			<input type="text" id="foodType">
+			<input class="jsFoodType" type="text" id="foodType">
 			<label for="city">City:</label>
-			<input type="text" id="city">
+			<input class="jsCity" type="text" id="city">
+			<label for="numResults">Results:</label>
+			<select class="jsResults" id="numResults">
+			  <option value="5">5</option>
+			  <option value="10">10</option>
+			  <option value="15">15</option>
+			</select>
+			<button type="submit">Submit</button>
 		</form>
+		<div id="map"></div>
 	</main>
 </body>
 </html>

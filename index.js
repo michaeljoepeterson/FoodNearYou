@@ -4,13 +4,41 @@ function errorHandle(){
   console.log("An error occured yup");
 }
 
-function handleZomato(data){
+function handlZomatoSearch(data){
   console.log(data);
-  console.log("success");
 }
 
-function callZomatoCity(endPoint, city, callback){
-  const newEndPoint = endUrl + endPoint;
+function callZomatoSearch(cityId, searchWord, numResults,callback){
+  const newEndPoint = endUrl + "search";
+  const settings = {
+    url: newEndPoint,
+    headers:{
+      "user-key": zomatoKey
+    },
+    data:{
+      entity_id:334,
+      entity_type: "city",
+      q: searchWord,
+      count: numResults,
+      sort:"rating",
+      order: "desc"
+    },
+    dataType: 'json',
+    type: "GET",
+    success: callback,
+  };
+  $.ajax(settings);  
+}
+
+
+function handleZomatoCity(data){
+  console.log(data);
+  console.log(data.location_suggestions[0].id);
+  callZomatoSearch(data.location_suggestions[0].id,"burger",5,handlZomatoSearch);
+}
+
+function callZomatoCity(city, callback){
+  const newEndPoint = endUrl + "cities";
   const settings = {
     url: newEndPoint,
     headers:{
@@ -67,7 +95,7 @@ function submitClicked(){
     addMarker(53.552364,-113.4961727,map1)
     addMarker(53.518218,-113.5007353,map1)
     console.log($(".jsResults").val());
-    callZomatoCity("cities","edmonton",handleZomato);
+    callZomatoCity("edmonton",handleZomatoCity);
   });
 }
 $(submitClicked)

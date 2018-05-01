@@ -1,5 +1,8 @@
-const endUrl = "https://developers.zomato.com/api/v2.1/"
-const zomatoKey = "a0f05595eda479ba1030417f5224deca"
+const endUrl = "https://developers.zomato.com/api/v2.1/";
+const zomatoKey = "a0f05595eda479ba1030417f5224deca";
+let infoWindowArray = [];
+let markerArray = [];
+let mapObj;
 function errorHandle(){
   console.log("An error occured yup");
 }
@@ -94,7 +97,9 @@ function initMap(latitude,longitude) {
   marker.addListener('click', function() {
     infowindow.open(map, marker);
   });
-
+  infoWindowArray.push(infowindow);
+  markerArray.push(marker);
+  mapObj = map;
   return map
 }
 function addMarker(latitude,longitude,map){
@@ -111,13 +116,38 @@ function addMarker(latitude,longitude,map){
   marker.addListener('click', function() {
     infowindow.open(map, marker);
   });
+  infoWindowArray.push(infowindow);
+  markerArray.push(marker);
 }
 //$(initMap);
 function submitClicked(){
   $(".submitForm").submit(function(event){
     event.preventDefault();
     let userCity = $(".jsCity").val();
+    markerArray = [];
+    infoWindowArray = [];
     callZomatoCity(userCity,handleZomatoCity);
+    console.log(infoWindowArray);
+    console.log(markerArray);
+    $(".jsList").empty();
+    
+    let testHtml = `<form><button class="jsTest">Test</button></form>`;
+    $(".jsList").append(testHtml);
+
+    let onVal = false;
+    $(".jsList").on("click", ".jsTest", function(event){
+      event.preventDefault();
+      
+      if (onVal === false){
+        infoWindowArray[0].open(mapObj,markerArray[0]);
+        onVal = true;
+      }
+      else{
+        
+         infoWindowArray[0].close();
+         onVal = false
+      }
+    });
     /*
     let map1 = initMap(53.46927239999999, -113.63656679999997);
     addMarker(53.5176707,-113.4995439,map1)

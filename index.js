@@ -6,6 +6,14 @@ function errorHandle(){
 
 function handlZomatoSearch(data){
   console.log(data);
+  let initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
+  let initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
+  let map1 = initMap(initialLat, initialLong);
+  for(i = 1; i < data.restaurants.length; i++){
+    let lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
+    let long = parseFloat(data.restaurants[i].restaurant.location.longitude);
+    addMarker(lat,long,map1);
+  }
 }
 
 function callZomatoSearch(cityId, searchWord, numResults,callback){
@@ -16,7 +24,7 @@ function callZomatoSearch(cityId, searchWord, numResults,callback){
       "user-key": zomatoKey
     },
     data:{
-      entity_id:334,
+      entity_id:cityId,
       entity_type: "city",
       q: searchWord,
       count: numResults,
@@ -34,7 +42,10 @@ function callZomatoSearch(cityId, searchWord, numResults,callback){
 function handleZomatoCity(data){
   console.log(data);
   console.log(data.location_suggestions[0].id);
-  callZomatoSearch(data.location_suggestions[0].id,"burger",5,handlZomatoSearch);
+  let cityId = data.location_suggestions[0].id;
+  let cuisineType = $(".jsFoodType").val();
+  let num = $(".jsResults").val();
+  callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
 }
 
 function callZomatoCity(city, callback){
@@ -75,6 +86,15 @@ function initMap(latitude,longitude) {
     map: map,
     label: "1"
   });
+
+  var infowindow = new google.maps.InfoWindow({
+    content: "test1"
+  });
+
+  marker.addListener('click', function() {
+    infowindow.open(map, marker);
+  });
+
   return map
 }
 function addMarker(latitude,longitude,map){
@@ -84,18 +104,27 @@ function addMarker(latitude,longitude,map){
     map: map,
     label: "2"
   });  
+  var infowindow = new google.maps.InfoWindow({
+    content: "test2"
+  });
+
+  marker.addListener('click', function() {
+    infowindow.open(map, marker);
+  });
 }
 //$(initMap);
 function submitClicked(){
   $(".submitForm").submit(function(event){
     event.preventDefault();
-    let map1 = initMap(53.46927239999999
-,  -113.63656679999997);
+    let userCity = $(".jsCity").val();
+    callZomatoCity(userCity,handleZomatoCity);
+    /*
+    let map1 = initMap(53.46927239999999, -113.63656679999997);
     addMarker(53.5176707,-113.4995439,map1)
     addMarker(53.552364,-113.4961727,map1)
     addMarker(53.518218,-113.5007353,map1)
     console.log($(".jsResults").val());
-    callZomatoCity("edmonton",handleZomatoCity);
+    */
   });
 }
 $(submitClicked)

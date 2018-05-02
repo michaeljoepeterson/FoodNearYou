@@ -7,6 +7,40 @@ function errorHandle(){
   console.log("An error occured yup");
 }
 
+function displayInfo(index){
+  const map = infoWindowArray[index].getMap();
+    if (map !== null && typeof map !== "undefined"){
+      infoWindowArray[index].close();
+      console.log("close");
+        //onVal = true;
+    }
+    else{
+      infoWindowArray[index].open(mapObj,markerArray[index]);
+        //onVal = false
+    }
+    mapObj.setZoom(15);
+    mapObj.panTo(markerArray[index].position);
+    console.log(map);
+}
+
+function resultClicked(){
+  $(".jsList").on("click",".jsItem", function(event){
+    const itemIndex = $(this).attr("data-item-index");
+    displayInfo(itemIndex);
+  });
+}
+
+function renderResult(name,rating,text,votes,index){
+  const htmlString = `
+    <li class="resultItem jsItem" data-item-index="${index}">
+      <h3 class="listItemName">${name}</h3>
+      <p class="listItemText">Rating: ${rating} "${text}"</p>
+      <p class="listItemText">Votes: ${votes}</p>
+    </li>
+    `;
+  $(".jsList").append(htmlString);
+}
+
 function handlZomatoSearch(data){
   console.log(data);
   const initialName = data.restaurants[0].restaurant.name;
@@ -16,6 +50,9 @@ function handlZomatoSearch(data){
   let initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
   let initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
   let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText,initialVotes);
+
+  renderResult(initialName,initialRating,initialText,initialVotes,0);
+
   for(i = 1; i < data.restaurants.length; i++){
     let name = data.restaurants[i].restaurant.name;
     let rating = data.restaurants[i].restaurant.user_rating.aggregate_rating;
@@ -24,6 +61,7 @@ function handlZomatoSearch(data){
     let lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
     let long = parseFloat(data.restaurants[i].restaurant.location.longitude);
     addMarker(lat,long,map1,name,rating,text,votes,i);
+    renderResult(name,rating,text,votes,i);
   }
 }
 
@@ -135,37 +173,20 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,index){
   infoWindowArray.push(infowindow);
   markerArray.push(marker);
 }
-function testClicked(){
-  let onVal = false;
-  $(".jsList").on("click", ".jsTest", function(event){
-    event.preventDefault();
-    let map = infoWindowArray[0].getMap();
-    if (map !== null && typeof map !== "undefined"){
-      infoWindowArray[0].close();
-        //onVal = true;
-    }
-    else{
-      infoWindowArray[0].open(mapObj,markerArray[0]);
-        //onVal = false
-    }
-    mapObj.setZoom(15);
-    mapObj.panTo(markerArray[0].position);
-  });
-}
+
+
 function submitClicked(){
   $(".submitForm").submit(function(event){
     event.preventDefault();
+    $(".jsList").empty()
     let userCity = $(".jsCity").val();
     markerArray = [];
     infoWindowArray = [];
     callZomatoCity(userCity,handleZomatoCity);
     console.log(infoWindowArray);
     console.log(markerArray);
-    $(".jsList").empty();
-    
-    let testHtml = `<form><button class="jsTest">Test</button></form>`;
-    $(".jsList").append(testHtml);
-    testClicked();
+    ;
+    resultClicked();
     /*
     let map1 = initMap(53.46927239999999, -113.63656679999997);
     addMarker(53.5176707,-113.4995439,map1)

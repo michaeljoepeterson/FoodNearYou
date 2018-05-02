@@ -9,13 +9,21 @@ function errorHandle(){
 
 function handlZomatoSearch(data){
   console.log(data);
+  const initialName = data.restaurants[0].restaurant.name;
+  const initialRating = data.restaurants[0].restaurant.user_rating.aggregate_rating;
+  const initialText = data.restaurants[0].restaurant.user_rating.rating_text;
+  const initialVotes = data.restaurants[0].restaurant.user_rating.votes;
   let initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
   let initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
-  let map1 = initMap(initialLat, initialLong);
+  let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText,initialVotes);
   for(i = 1; i < data.restaurants.length; i++){
+    let name = data.restaurants[i].restaurant.name;
+    let rating = data.restaurants[i].restaurant.user_rating.aggregate_rating;
+    let text = data.restaurants[i].restaurant.user_rating.rating_text;
+    let votes = data.restaurants[i].restaurant.user_rating.votes;
     let lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
     let long = parseFloat(data.restaurants[i].restaurant.location.longitude);
-    addMarker(lat,long,map1);
+    addMarker(lat,long,map1,name,rating,text,votes,i);
   }
 }
 
@@ -78,7 +86,7 @@ function callGeocode(){
   geocoder.geocode({'address': "t6m2w9"},handleGeocode);
 }
 */
-function initMap(latitude,longitude) {
+function initMap(latitude,longitude,name,rating,text,votes) {
   let uluru = {lat: latitude, lng: longitude};
   let map = new google.maps.Map(document.getElementById('map'), {
     zoom: 15,
@@ -91,7 +99,10 @@ function initMap(latitude,longitude) {
   });
 
   var infowindow = new google.maps.InfoWindow({
-    content: "test1"
+    content: `<h2 class="markerHeading">${name}</h2>
+    <p>Rating: ${rating} "${text}"</p>
+    <p>Votes: ${votes}</p>
+    `
   });
 
   marker.addListener('click', function() {
@@ -102,15 +113,20 @@ function initMap(latitude,longitude) {
   mapObj = map;
   return map
 }
-function addMarker(latitude,longitude,map){
-  let uluru = {lat: latitude, lng: longitude};
+function addMarker(latitude,longitude,map,name,rating,text,votes,index){
+  let labelNum = index + 1;
+  labelNum = labelNum.toString();
+  const uluru = {lat: latitude, lng: longitude};
   let marker = new google.maps.Marker({
     position: uluru,
     map: map,
-    label: "2"
+    label: labelNum
   });  
   var infowindow = new google.maps.InfoWindow({
-    content: "test2"
+    content: `<h2 class="markerHeading">${name}</h2>
+    <p>Rating: ${rating} "${text}"</p>
+    <p>Votes: ${votes}</p>
+    `
   });
 
   marker.addListener('click', function() {
@@ -147,6 +163,8 @@ function submitClicked(){
          infoWindowArray[0].close();
          onVal = false
       }
+      mapObj.setZoom(15);
+      mapObj.panTo(markerArray[0].position);
     });
     /*
     let map1 = initMap(53.46927239999999, -113.63656679999997);

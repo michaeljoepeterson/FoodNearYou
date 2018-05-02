@@ -135,7 +135,23 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,index){
   infoWindowArray.push(infowindow);
   markerArray.push(marker);
 }
-//$(initMap);
+function testClicked(){
+  let onVal = false;
+  $(".jsList").on("click", ".jsTest", function(event){
+    event.preventDefault();
+    let map = infoWindowArray[0].getMap();
+    if (map !== null && typeof map !== "undefined"){
+      infoWindowArray[0].close();
+        //onVal = true;
+    }
+    else{
+      infoWindowArray[0].open(mapObj,markerArray[0]);
+        //onVal = false
+    }
+    mapObj.setZoom(15);
+    mapObj.panTo(markerArray[0].position);
+  });
+}
 function submitClicked(){
   $(".submitForm").submit(function(event){
     event.preventDefault();
@@ -149,23 +165,7 @@ function submitClicked(){
     
     let testHtml = `<form><button class="jsTest">Test</button></form>`;
     $(".jsList").append(testHtml);
-
-    let onVal = false;
-    $(".jsList").on("click", ".jsTest", function(event){
-      event.preventDefault();
-      
-      if (onVal === false){
-        infoWindowArray[0].open(mapObj,markerArray[0]);
-        onVal = true;
-      }
-      else{
-        
-         infoWindowArray[0].close();
-         onVal = false
-      }
-      mapObj.setZoom(15);
-      mapObj.panTo(markerArray[0].position);
-    });
+    testClicked();
     /*
     let map1 = initMap(53.46927239999999, -113.63656679999997);
     addMarker(53.5176707,-113.4995439,map1)

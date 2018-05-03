@@ -17,6 +17,7 @@ function displayInfo(index){
     else{
       infoWindowArray[index].open(mapObj,markerArray[index]);
         //onVal = false
+      console.log("open");
     }
     mapObj.setZoom(15);
     mapObj.panTo(markerArray[index].position);
@@ -25,6 +26,7 @@ function displayInfo(index){
 
 function resultClicked(){
   $(".jsList").on("click",".jsItem", function(event){
+    event.stopImmediatePropagation();
     const itemIndex = $(this).attr("data-item-index");
     displayInfo(itemIndex);
   });
@@ -178,7 +180,7 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,index){
 function submitClicked(){
   $(".submitForm").submit(function(event){
     event.preventDefault();
-    $(".jsList").empty()
+    $(".jsList").empty();
     let userCity = $(".jsCity").val();
     markerArray = [];
     infoWindowArray = [];

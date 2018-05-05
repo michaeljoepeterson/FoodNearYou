@@ -16,20 +16,32 @@ function checkInput(strToCheck){
 function clearError(){
   $(".jsError").empty(); 
 }
-
+function setMapOnAll(map) {
+  console.log(markerArray);
+  for (var i = 0; i < markerArray.length; i++) {
+    console.log(i);
+    markerArray[i].setMap(map);
+  }
+}
 function apiError(){
-  let msgHtml = `<p>An error occured</p>`;
-  $(".jsError").html(msgHtml); 
+ //let msgHtml = `<p>An error occured</p>`;
+  //$(".jsError").html(msgHtml); 
+  let msg = "An error occured please check spelling"
+  alert(msg);
 }
 
 function errorHandleEmpty(){
-  let msgHtml = `<p>Please fill in all fields</p>`;
-  $(".jsError").html(msgHtml); 
+  //let msgHtml = `<p>Please fill in all fields</p>`;
+  //$(".jsError").html(msgHtml); 
+  let msg = "Please fill in all fields";
+  alert(msg);
 }
 
 function errorHandleChar(){
-  let msgHtml = `<p>Illegal character, please check your input</p>`;
-  $(".jsError").html(msgHtml); 
+  //let msgHtml = `<p>Illegal character, please check your input</p>`;
+  //$(".jsError").html(msgHtml); 
+  let msg = "Illegal character, please check your input";
+  alert(msg);
 }
 function displayInfo(index){
   const map = infoWindowArray[index].getMap();
@@ -68,26 +80,33 @@ function renderResult(name,rating,text,votes,index){
 }
 
 function handlZomatoSearch(data){
-  console.log(data);
-  const initialName = data.restaurants[0].restaurant.name;
-  const initialRating = data.restaurants[0].restaurant.user_rating.aggregate_rating;
-  const initialText = data.restaurants[0].restaurant.user_rating.rating_text;
-  const initialVotes = data.restaurants[0].restaurant.user_rating.votes;
-  let initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
-  let initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
-  let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText,initialVotes);
+  if (data.restaurants.length === 0){
+      apiError();
+    }
+  else{
+    console.log(data);
+    const initialName = data.restaurants[0].restaurant.name;
+    const initialRating = data.restaurants[0].restaurant.user_rating.aggregate_rating;
+    const initialText = data.restaurants[0].restaurant.user_rating.rating_text;
+    const initialVotes = data.restaurants[0].restaurant.user_rating.votes;
+    let initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
+    let initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
+    let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText,initialVotes);
 
-  renderResult(initialName,initialRating,initialText,initialVotes,0);
+    renderResult(initialName,initialRating,initialText,initialVotes,0);
 
-  for(i = 1; i < data.restaurants.length; i++){
-    let name = data.restaurants[i].restaurant.name;
-    let rating = data.restaurants[i].restaurant.user_rating.aggregate_rating;
-    let text = data.restaurants[i].restaurant.user_rating.rating_text;
-    let votes = data.restaurants[i].restaurant.user_rating.votes;
-    let lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
-    let long = parseFloat(data.restaurants[i].restaurant.location.longitude);
-    addMarker(lat,long,map1,name,rating,text,votes,i);
-    renderResult(name,rating,text,votes,i);
+    for(i = 1; i < data.restaurants.length; i++){
+      
+      let name = data.restaurants[i].restaurant.name;
+      let rating = data.restaurants[i].restaurant.user_rating.aggregate_rating;
+      let text = data.restaurants[i].restaurant.user_rating.rating_text;
+      let votes = data.restaurants[i].restaurant.user_rating.votes;
+      let lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
+      let long = parseFloat(data.restaurants[i].restaurant.location.longitude);
+      addMarker(lat,long,map1,name,rating,text,votes,i);
+      renderResult(name,rating,text,votes,i);
+    
+    }
   }
 }
 
@@ -136,6 +155,7 @@ function handleZomatoCity(data){
     }
     else{
       clearError();
+      $(".jsCuisineSelect").val("0");
       callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
     }
   }
@@ -223,8 +243,7 @@ function submitClicked(){
     event.preventDefault();
     $(".jsList").empty();
     let userCity = $(".jsCity").val();
-    markerArray = [];
-    infoWindowArray = [];
+    console.log(markerArray);
     let charCheck = checkInput(userCity);
     if (userCity === ""){
       errorHandleEmpty();
@@ -233,6 +252,8 @@ function submitClicked(){
       errorHandleChar();
     }
     else{
+      markerArray = [];
+      infoWindowArray = [];
       clearError();
       callZomatoCity(userCity,handleZomatoCity);
     }

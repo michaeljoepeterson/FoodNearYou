@@ -3,7 +3,10 @@ const zomatoKey = "a0f05595eda479ba1030417f5224deca";
 let infoWindowArray = [];
 let markerArray = [];
 let mapObj;
-
+//add input field for state/province and functions for them
+//move around cuisne inputs/clarify for user which input takes precidence
+//on error set map to 0,0
+//add cost to markers/results
 function checkInput(strToCheck){
   const legalChars = /^[a-zA-z0-9.,?!;\s']*$/;
   //console.log(legalChars.test(strToCheck));

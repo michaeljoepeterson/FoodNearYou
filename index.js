@@ -3,10 +3,26 @@ const zomatoKey = "a0f05595eda479ba1030417f5224deca";
 let infoWindowArray = [];
 let markerArray = [];
 let mapObj;
-function errorHandle(){
-  console.log("An error occured yup");
+
+function checkInput(strToCheck){
+  const legalChars = /^[a-zA-z.,?!;\s']*$/;
+  //console.log(legalChars.test(strToCheck));
+  return legalChars.test(strToCheck)
 }
 
+function clearError(){
+  $(".jsError").empty(); 
+}
+
+function errorHandleEmpty(){
+  let msgHtml = `<p>Please fill in all fields</p>`;
+  $(".jsError").html(msgHtml); 
+}
+
+function errorHandleChar(){
+  let msgHtml = `<p>Illegal character, please check your input</p>`;
+  $(".jsError").html(msgHtml); 
+}
 function displayInfo(index){
   const map = infoWindowArray[index].getMap();
     if (map !== null && typeof map !== "undefined"){
@@ -96,13 +112,19 @@ function handleZomatoCity(data){
   let cuisineType = $(".jsFoodType").val();
   let cuisineDropDown = $(".jsCuisineSelect").val();
   let num = $(".jsResults").val();
+  let checkChar = checkInput(cuisineType);
   if (cuisineType === "" && cuisineDropDown == 0){
-    console.log("empty");
+    errorHandleEmpty();
   }
   else if(cuisineType === "" && cuisineDropDown != 0){
+    clearError();
     callZomatoSearch(cityId,cuisineDropDown,num,handlZomatoSearch);
   }
+  else if (checkChar === false){
+    errorHandleChar();
+  }
   else{
+    clearError();
     callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
   }
   
@@ -185,7 +207,6 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,index){
   markerArray.push(marker);
 }
 
-
 function submitClicked(){
   $(".submitForm").submit(function(event){
     event.preventDefault();
@@ -193,10 +214,21 @@ function submitClicked(){
     let userCity = $(".jsCity").val();
     markerArray = [];
     infoWindowArray = [];
-    callZomatoCity(userCity,handleZomatoCity);
-    console.log(infoWindowArray);
-    console.log(markerArray);
-    ;
+    let charCheck = checkInput(userCity);
+    if (userCity === ""){
+      errorHandleEmpty();
+    }
+    else if (charCheck === false){
+      errorHandleChar();
+    }
+    else{
+      clearError();
+      callZomatoCity(userCity,handleZomatoCity);
+    }
+    
+    //console.log(infoWindowArray);
+    //console.log(markerArray);
+    
     resultClicked();
     /*
     let map1 = initMap(53.46927239999999, -113.63656679999997);

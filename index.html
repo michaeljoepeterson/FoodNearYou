@@ -12,11 +12,12 @@
 <body>
 	<header role="banner"><h1>Search For Food in your city</h1></header>
 	<main role="main">
+		<div class="error jsError"></div>
 		<form class="submitForm">
 			<label for="foodType">Type of Cuisine:</label>
 			<input class="jsFoodType" type="text" id="foodType">
 			<label for="foodTypeSelect">Or Select a Cuisine Type:</label>
-			<select class="jsResults" id="numResults">
+			<select class="jsCuisineSelect" id="numResults">
 			  <option value="0">None</option>
 			  <option value="American">American</option>
 			  <option value="Asian">Asian</option>

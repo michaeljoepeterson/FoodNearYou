@@ -11,17 +11,17 @@ function displayInfo(index){
   const map = infoWindowArray[index].getMap();
     if (map !== null && typeof map !== "undefined"){
       infoWindowArray[index].close();
-      console.log("close");
+      //console.log("close");
         //onVal = true;
     }
     else{
       infoWindowArray[index].open(mapObj,markerArray[index]);
         //onVal = false
-      console.log("open");
+      //console.log("open");
     }
     mapObj.setZoom(15);
     mapObj.panTo(markerArray[index].position);
-    console.log(map);
+    //console.log(map);
 }
 
 function resultClicked(){
@@ -89,14 +89,23 @@ function callZomatoSearch(cityId, searchWord, numResults,callback){
   $.ajax(settings);  
 }
 
-
 function handleZomatoCity(data){
   console.log(data);
   console.log(data.location_suggestions[0].id);
   let cityId = data.location_suggestions[0].id;
   let cuisineType = $(".jsFoodType").val();
+  let cuisineDropDown = $(".jsCuisineSelect").val();
   let num = $(".jsResults").val();
-  callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
+  if (cuisineType === "" && cuisineDropDown == 0){
+    console.log("empty");
+  }
+  else if(cuisineType === "" && cuisineDropDown != 0){
+    callZomatoSearch(cityId,cuisineDropDown,num,handlZomatoSearch);
+  }
+  else{
+    callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
+  }
+  
 }
 
 function callZomatoCity(city, callback){

@@ -5,13 +5,18 @@ let markerArray = [];
 let mapObj;
 
 function checkInput(strToCheck){
-  const legalChars = /^[a-zA-z.,?!;\s']*$/;
+  const legalChars = /^[a-zA-z0-9.,?!;\s']*$/;
   //console.log(legalChars.test(strToCheck));
   return legalChars.test(strToCheck)
 }
 
 function clearError(){
   $(".jsError").empty(); 
+}
+
+function apiError(){
+  let msgHtml = `<p>An error occured</p>`;
+  $(".jsError").html(msgHtml); 
 }
 
 function errorHandleEmpty(){
@@ -106,28 +111,31 @@ function callZomatoSearch(cityId, searchWord, numResults,callback){
 }
 
 function handleZomatoCity(data){
-  console.log(data);
-  console.log(data.location_suggestions[0].id);
-  let cityId = data.location_suggestions[0].id;
-  let cuisineType = $(".jsFoodType").val();
-  let cuisineDropDown = $(".jsCuisineSelect").val();
-  let num = $(".jsResults").val();
-  let checkChar = checkInput(cuisineType);
-  if (cuisineType === "" && cuisineDropDown == 0){
-    errorHandleEmpty();
+  if (data.location_suggestions.length === 0){
+    apiError();
+  }else{
+    console.log(data);
+    console.log(data.location_suggestions[0].id);
+    let cityId = data.location_suggestions[0].id;
+    let cuisineType = $(".jsFoodType").val();
+    let cuisineDropDown = $(".jsCuisineSelect").val();
+    let num = $(".jsResults").val();
+    let checkChar = checkInput(cuisineType);
+    if (cuisineType === "" && cuisineDropDown == 0){
+      errorHandleEmpty();
+    }
+    else if(cuisineType === "" && cuisineDropDown != 0){
+      clearError();
+      callZomatoSearch(cityId,cuisineDropDown,num,handlZomatoSearch);
+    }
+    else if (checkChar === false){
+      errorHandleChar();
+    }
+    else{
+      clearError();
+      callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
+    }
   }
-  else if(cuisineType === "" && cuisineDropDown != 0){
-    clearError();
-    callZomatoSearch(cityId,cuisineDropDown,num,handlZomatoSearch);
-  }
-  else if (checkChar === false){
-    errorHandleChar();
-  }
-  else{
-    clearError();
-    callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
-  }
-  
 }
 
 function callZomatoCity(city, callback){

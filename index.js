@@ -25,7 +25,7 @@ function setMapOnAll(map) {
 function apiError(){
  //let msgHtml = `<p>An error occured</p>`;
   //$(".jsError").html(msgHtml); 
-  const msg = "An error occured please check spelling"
+  const msg = "An error no results to display"
   alert(msg);
 }
 
@@ -136,13 +136,26 @@ function callZomatoSearch(cityId, searchWord, numResults,callback){
   $.ajax(settings);  
 }
 
+function checkState(arr,stateStr){
+  for(i = 0; i < arr.length;i++){
+    let checkState = arr[i].state_name.toLowerCase();
+    if(checkState.includes(stateStr)){
+      console.log(i);
+      return i;
+    }
+  }
+}
+
 function handleZomatoCity(data){
   if (data.location_suggestions.length === 0){
     apiError();
   }else{
     console.log(data);
     console.log(data.location_suggestions[0].id);
-    const cityId = data.location_suggestions[0].id;
+    const userState = $(".jsState").val().toLowerCase();
+    const index = checkState(data.location_suggestions, userState);
+    const cityId = data.location_suggestions[index].id;
+    console.log(data.location_suggestions[index].id);
     const cuisineType = $(".jsFoodType").val();
     const cuisineDropDown = $(".jsCuisineSelect").val();
     const num = $(".jsResults").val();
@@ -151,7 +164,7 @@ function handleZomatoCity(data){
       errorHandleEmpty();
     }
     else if(cuisineType === "" && cuisineDropDown != 0){
-      console.log("test");
+      //console.log("test");
       //clearError();
       markerArray = [];
       infoWindowArray = [];

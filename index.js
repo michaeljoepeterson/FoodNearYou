@@ -13,9 +13,7 @@ function checkInput(strToCheck){
   return legalChars.test(strToCheck)
 }
 
-function clearError(){
-  $(".jsError").empty(); 
-}
+
 function setMapOnAll(map) {
   console.log(markerArray);
   for (var i = 0; i < markerArray.length; i++) {
@@ -23,6 +21,7 @@ function setMapOnAll(map) {
     markerArray[i].setMap(map);
   }
 }
+
 function apiError(){
  //let msgHtml = `<p>An error occured</p>`;
   //$(".jsError").html(msgHtml); 
@@ -42,6 +41,7 @@ function errorHandleChar(){
   //$(".jsError").html(msgHtml); 
   let msg = "Illegal character, please check your input";
   alert(msg);
+  //setMapOnAll(null);
 }
 function displayInfo(index){
   const map = infoWindowArray[index].getMap();
@@ -65,6 +65,10 @@ function resultClicked(){
     event.stopImmediatePropagation();
     const itemIndex = $(this).attr("data-item-index");
     displayInfo(itemIndex);
+    let offset = 5;
+    $('html, body').animate({
+        scrollTop: $("#map").offset().top + offset
+    }, 300);
   });
 }
 
@@ -105,7 +109,7 @@ function handlZomatoSearch(data){
       let long = parseFloat(data.restaurants[i].restaurant.location.longitude);
       addMarker(lat,long,map1,name,rating,text,votes,i);
       renderResult(name,rating,text,votes,i);
-    
+
     }
   }
 }
@@ -147,14 +151,19 @@ function handleZomatoCity(data){
       errorHandleEmpty();
     }
     else if(cuisineType === "" && cuisineDropDown != 0){
-      clearError();
+      console.log("test");
+      //clearError();
+      markerArray = [];
+      infoWindowArray = [];
       callZomatoSearch(cityId,cuisineDropDown,num,handlZomatoSearch);
     }
     else if (checkChar === false){
       errorHandleChar();
     }
     else{
-      clearError();
+      //clearError();
+      markerArray = [];
+      infoWindowArray = [];
       $(".jsCuisineSelect").val("0");
       callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
     }
@@ -215,6 +224,7 @@ function initMap(latitude,longitude,name,rating,text,votes) {
   mapObj = map;
   return map
 }
+
 function addMarker(latitude,longitude,map,name,rating,text,votes,index){
   let labelNum = index + 1;
   labelNum = labelNum.toString();
@@ -241,26 +251,25 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,index){
 function submitClicked(){
   $(".submitForm").submit(function(event){
     event.preventDefault();
-    $(".jsList").empty();
     let userCity = $(".jsCity").val();
     console.log(markerArray);
     let charCheck = checkInput(userCity);
-    if (userCity === ""){
+    let cuisineType = $(".jsFoodType").val();
+    let checkCharCuisine = checkInput(cuisineType);
+    let cuisineDropDown = $(".jsCuisineSelect").val();
+    if ((userCity === "" || cuisineType === "") && cuisineDropDown == 0){
       errorHandleEmpty();
     }
-    else if (charCheck === false){
+    else if (charCheck === false || checkCharCuisine === false){
       errorHandleChar();
     }
     else{
-      markerArray = [];
-      infoWindowArray = [];
-      clearError();
+      $(".jsList").empty();
+      //clearError();
       callZomatoCity(userCity,handleZomatoCity);
     }
-    
     //console.log(infoWindowArray);
     //console.log(markerArray);
-    
     resultClicked();
     /*
     let map1 = initMap(53.46927239999999, -113.63656679999997);

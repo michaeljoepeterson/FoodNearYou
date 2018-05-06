@@ -25,21 +25,21 @@ function setMapOnAll(map) {
 function apiError(){
  //let msgHtml = `<p>An error occured</p>`;
   //$(".jsError").html(msgHtml); 
-  let msg = "An error occured please check spelling"
+  const msg = "An error occured please check spelling"
   alert(msg);
 }
 
 function errorHandleEmpty(){
   //let msgHtml = `<p>Please fill in all fields</p>`;
   //$(".jsError").html(msgHtml); 
-  let msg = "Please fill in all fields";
+  const msg = "Please fill in all fields";
   alert(msg);
 }
 
 function errorHandleChar(){
   //let msgHtml = `<p>Illegal character, please check your input</p>`;
   //$(".jsError").html(msgHtml); 
-  let msg = "Illegal character, please check your input";
+  const msg = "Illegal character, please check your input";
   alert(msg);
   //setMapOnAll(null);
 }
@@ -65,7 +65,7 @@ function resultClicked(){
     event.stopImmediatePropagation();
     const itemIndex = $(this).attr("data-item-index");
     displayInfo(itemIndex);
-    let offset = 5;
+    const offset = 5;
     $('html, body').animate({
         scrollTop: $("#map").offset().top + offset
     }, 300);
@@ -93,20 +93,20 @@ function handlZomatoSearch(data){
     const initialRating = data.restaurants[0].restaurant.user_rating.aggregate_rating;
     const initialText = data.restaurants[0].restaurant.user_rating.rating_text;
     const initialVotes = data.restaurants[0].restaurant.user_rating.votes;
-    let initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
-    let initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
+    const initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
+    const initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
     let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText,initialVotes);
 
     renderResult(initialName,initialRating,initialText,initialVotes,0);
 
     for(i = 1; i < data.restaurants.length; i++){
       
-      let name = data.restaurants[i].restaurant.name;
-      let rating = data.restaurants[i].restaurant.user_rating.aggregate_rating;
-      let text = data.restaurants[i].restaurant.user_rating.rating_text;
-      let votes = data.restaurants[i].restaurant.user_rating.votes;
-      let lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
-      let long = parseFloat(data.restaurants[i].restaurant.location.longitude);
+      const name = data.restaurants[i].restaurant.name;
+      const rating = data.restaurants[i].restaurant.user_rating.aggregate_rating;
+      const text = data.restaurants[i].restaurant.user_rating.rating_text;
+      const votes = data.restaurants[i].restaurant.user_rating.votes;
+      const lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
+      const long = parseFloat(data.restaurants[i].restaurant.location.longitude);
       addMarker(lat,long,map1,name,rating,text,votes,i);
       renderResult(name,rating,text,votes,i);
 
@@ -142,11 +142,11 @@ function handleZomatoCity(data){
   }else{
     console.log(data);
     console.log(data.location_suggestions[0].id);
-    let cityId = data.location_suggestions[0].id;
-    let cuisineType = $(".jsFoodType").val();
-    let cuisineDropDown = $(".jsCuisineSelect").val();
-    let num = $(".jsResults").val();
-    let checkChar = checkInput(cuisineType);
+    const cityId = data.location_suggestions[0].id;
+    const cuisineType = $(".jsFoodType").val();
+    const cuisineDropDown = $(".jsCuisineSelect").val();
+    const num = $(".jsResults").val();
+    const checkChar = checkInput(cuisineType);
     if (cuisineType === "" && cuisineDropDown == 0){
       errorHandleEmpty();
     }
@@ -209,7 +209,7 @@ function initMap(latitude,longitude,name,rating,text,votes) {
     label: "1"
   });
 
-  var infowindow = new google.maps.InfoWindow({
+  let infowindow = new google.maps.InfoWindow({
     content: `<h2 class="markerHeading">${name}</h2>
     <p>Rating: ${rating} "${text}"</p>
     <p>Votes: ${votes}</p>
@@ -251,12 +251,12 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,index){
 function submitClicked(){
   $(".submitForm").submit(function(event){
     event.preventDefault();
-    let userCity = $(".jsCity").val();
+    const userCity = $(".jsCity").val();
     console.log(markerArray);
-    let charCheck = checkInput(userCity);
-    let cuisineType = $(".jsFoodType").val();
-    let checkCharCuisine = checkInput(cuisineType);
-    let cuisineDropDown = $(".jsCuisineSelect").val();
+    const charCheck = checkInput(userCity);
+    const cuisineType = $(".jsFoodType").val();
+    const checkCharCuisine = checkInput(cuisineType);
+    const cuisineDropDown = $(".jsCuisineSelect").val();
     if ((userCity === "" || cuisineType === "") && cuisineDropDown == 0){
       errorHandleEmpty();
     }

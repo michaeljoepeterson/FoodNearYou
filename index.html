@@ -3,6 +3,8 @@
 <head>
 	<title>Food Near You</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" href="float-grid.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	<script type="text/javascript" src="index.js"></script>
 	<script async defer
@@ -10,45 +12,82 @@
     </script>
 </head>
 <body>
-	<header role="banner"><h1>Search for Food in Your City</h1></header>
+	<header class="center" role="banner"><h1>Search for Food in Your City</h1></header>
 	<main role="main">
 		<div class="error jsError"></div>
 		<form class="submitForm">
-			<h2>Choose One</h2>
-			<label for="foodTypeSelect">Select a Cuisine Type:</label>
-			<select class="jsCuisineSelect" id="numResults">
-			  <option value="0">None</option>
-			  <option value="American">American</option>
-			  <option value="Asian">Asian</option>
-			  <option value="BBQ">BBQ</option>
-			  <option value="Bar Food">Bar Food</option>
-			  <option value="Breakfast">Breakfast</option>
-			  <option value="Burger">Burger</option>
-			  <option value="Cafe">Cafe</option>
-			  <option value="Desserts">Desserts</option>
-			  <option value="Middle Eastern">Middle Eastern</option>
-			  <option value="Ramen">Ramen</option>
-			  <option value="Seafood">Seafood</option>
-			  <option value="Spanish">Spanish</option>
-			  <option value="Vegetarian">Vegetarian</option>
-			</select>
-			<label for="foodType">Or Search For Food:</label>
-			<input class="jsFoodType" type="text" id="foodType">		
-			<label for="city">City:</label>
-			<input required class="jsCity" type="text" id="city">
-			<label for="state">State/Province:</label>
-			<input class="jsState" type="text" id="state">
-			<label for="numResults">Results:</label>
-			<select class="jsResults" id="numResults">
-			  <option value="5">5</option>
-			  <option value="10">10</option>
-			  <option value="15">15</option>
-			</select>
-			<button type="submit">Submit</button>
+			<h2 class="center">Choose One</h2>
+			<div class="row center">
+				<div class="col-6">
+					<label for="foodType">Search For Food:</label>
+				</div>
+				<div class="col-6">
+					<input class="jsFoodType userInput" type="text" id="foodType">
+				</div>
+			</div>
+			<div class="row center">
+				<div class="col-12">
+					<p><strong>Or</strong></p>
+				</div>
+			</div>
+			<div class="row center">
+				<div class="col-6 center">
+					<label class="center" for="foodTypeSelect">Select a Cuisine Type:</label>
+				</div>
+				<div class="col-6 center">
+					<select class="jsCuisineSelect center userInput" id="numResults">
+					  <option value="0">None</option>
+					  <option value="American">American</option>
+					  <option value="Asian">Asian</option>
+					  <option value="BBQ">BBQ</option>
+					  <option value="Bar Food">Bar Food</option>
+					  <option value="Breakfast">Breakfast</option>
+					  <option value="Burger">Burger</option>
+					  <option value="Cafe">Cafe</option>
+					  <option value="Desserts">Desserts</option>
+					  <option value="Middle Eastern">Middle Eastern</option>
+					  <option value="Ramen">Ramen</option>
+					  <option value="Seafood">Seafood</option>
+					  <option value="Spanish">Spanish</option>
+					  <option value="Vegetarian">Vegetarian</option>
+					</select>
+				</div>
+			</div>	
+			<div class="row center">
+				<div class="col-6 center">	
+					<label for="city">City:</label>
+				</div>
+				<div class="col-6 center">	
+					<input required class="jsCity userInput" type="text" id="city">
+				</div>
+			</div>
+			<div class="row center">
+				<div class="col-6 center">
+					<label for="state">State/Province:</label>
+				</div>
+				<div class="col-6 center">	
+					<input class="jsState userInput" type="text" id="state">
+				</div>
+			</div>
+			<div class="row center">
+				<div class="col-6 center">
+					<label for="numResults">Results:</label>
+				</div>
+				<div class="col-6 center">	
+					<select class="jsResults userInput" id="numResults">
+					  <option value="5">5</option>
+					  <option value="10">10</option>
+					  <option value="15">15</option>
+					</select>
+				</div>
+			</div>
+			<div class="row center">
+				<button class="submitButton" type="submit">Submit</button>
+			</div>
 		</form>
 		<div id="map"></div>
-		<div class="">
-			<ol class="jsList">
+		<div class="center">
+			<ol class="jsList centerList">
 			</ol>
 		</div>
 	</main>

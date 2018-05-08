@@ -1,7 +1,46 @@
 html, body{
 	height:100%;
+	font-size: 25px;
 }
 #map{
 	width:100%;
 	height: 500px;
+}
+.center{
+  text-align: center;
+  vertical-align: middle;
+}
+.userInput{
+	width:50%;
+	min-width: 10%;
+	min-height: 3vh;
+}
+.submitButton{
+	min-width: 15%;
+	height: 3vh;
+}
+.centerList {
+  text-align: center;
+  list-style-type: none;
+}
+ol{
+	margin:0;
+	margin-right: auto;
+	margin-left: auto;
+ 	padding:0;
+ 	width:50%;
+}
+ol li{
+	border-bottom: 1px solid black;
+}
+ol li:hover{
+	cursor: pointer;
+	border: 1px solid black;
+}
+@media only screen and (max-width: 640px){
+	ol{
+		margin: 0;
+		width: 100%;
+	}
+
 }

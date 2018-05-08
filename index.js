@@ -27,6 +27,7 @@ function apiError(){
   //$(".jsError").html(msgHtml); 
   const msg = "An error no results to display"
   alert(msg);
+  setMapOnAll(null);
 }
 
 function errorHandleEmpty(){
@@ -88,6 +89,8 @@ function handlZomatoSearch(data){
       apiError();
     }
   else{
+    markerArray = [];
+    infoWindowArray = [];
     console.log(data);
     const initialName = data.restaurants[0].restaurant.name;
     const initialRating = data.restaurants[0].restaurant.user_rating.aggregate_rating;
@@ -166,8 +169,6 @@ function handleZomatoCity(data){
     else if(cuisineType === "" && cuisineDropDown != 0){
       //console.log("test");
       //clearError();
-      markerArray = [];
-      infoWindowArray = [];
       callZomatoSearch(cityId,cuisineDropDown,num,handlZomatoSearch);
     }
     else if (checkChar === false){
@@ -175,8 +176,6 @@ function handleZomatoCity(data){
     }
     else{
       //clearError();
-      markerArray = [];
-      infoWindowArray = [];
       $(".jsCuisineSelect").val("0");
       callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
     }

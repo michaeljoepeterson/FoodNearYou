@@ -27,6 +27,7 @@ function apiError(){
   //$(".jsError").html(msgHtml); 
   const msg = "An error occured no results to display"
   alert(msg);
+  $(".loader").css("display","none");
   setMapOnAll(null);
 }
 
@@ -34,6 +35,7 @@ function errorHandleEmpty(){
   //let msgHtml = `<p>Please fill in all fields</p>`;
   //$(".jsError").html(msgHtml); 
   const msg = "Please fill in all fields";
+  $(".loader").css("display","none");
   alert(msg);
 }
 
@@ -41,6 +43,7 @@ function errorHandleChar(){
   //let msgHtml = `<p>Illegal character, please check your input</p>`;
   //$(".jsError").html(msgHtml); 
   const msg = "Illegal character, please check your input";
+  $(".loader").css("display","none");
   alert(msg);
   //setMapOnAll(null);
 }
@@ -92,6 +95,7 @@ function handlZomatoSearch(data){
       apiError();
     }
   else{
+    $(".loader").css("display","none");
     markerArray = [];
     infoWindowArray = [];
     console.log(data);
@@ -273,6 +277,7 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,cost,index){
 
 function submitClicked(){
   $(".submitForm").submit(function(event){
+    $(".loader").css("display","initial");
     event.preventDefault();
     const userCity = $(".jsCity").val();
     console.log(markerArray);

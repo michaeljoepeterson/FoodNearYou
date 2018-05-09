@@ -82,9 +82,9 @@ function renderResult(name,rating,text,votes,cost,index){
       <p class="listItemText">Average Cost For Two: $${cost}</p>
     </li>
     `;
-  //$(".jsList").append(htmlString);
-  $(htmlString).appendTo(".jsList").slideDown('1000');
-  //$(".jsItem").html()
+  $(".jsList").append(htmlString);
+  //$(htmlString).appendTo(".jsList").slideDown('1000');
+  
 }
 
 function handlZomatoSearch(data){
@@ -103,8 +103,8 @@ function handlZomatoSearch(data){
     const initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
     const costForTwo = parseInt(data.restaurants[0].restaurant.average_cost_for_two);
     let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText, initialVotes,costForTwo);
-    
-    setTimeout(renderResult(initialName,initialRating,initialText,initialVotes,costForTwo,0),5000);
+    renderResult(initialName,initialRating,initialText,initialVotes,costForTwo,0);
+    //setTimeout(renderResult(initialName,initialRating,initialText,initialVotes,costForTwo,0),5000);
     for(i = 1; i < data.restaurants.length; i++){
       
       const name = data.restaurants[i].restaurant.name;
@@ -115,8 +115,8 @@ function handlZomatoSearch(data){
       const long = parseFloat(data.restaurants[i].restaurant.location.longitude);
       const cost = parseInt(data.restaurants[i].restaurant.average_cost_for_two);
       addMarker(lat,long,map1,name,rating,text,votes,cost,i);
-      
-      setTimeout(renderResult(name,rating,text,votes,cost,i),5000);
+      renderResult(name,rating,text,votes,cost,i);
+      //setTimeout(renderResult(name,rating,text,votes,cost,i),5000);
     }
   }
 }

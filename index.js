@@ -25,7 +25,7 @@ function setMapOnAll(map) {
 function apiError(){
  //let msgHtml = `<p>An error occured</p>`;
   //$(".jsError").html(msgHtml); 
-  const msg = "An error no results to display"
+  const msg = "An error occured no results to display"
   alert(msg);
   setMapOnAll(null);
 }
@@ -73,15 +73,18 @@ function resultClicked(){
   });
 }
 
-function renderResult(name,rating,text,votes,index){
+function renderResult(name,rating,text,votes,cost,index){
   const htmlString = `
     <li class="resultItem jsItem" data-item-index="${index}">
       <h3 class="listItemName">${name}</h3>
       <p class="listItemText">Rating: ${rating} "${text}"</p>
       <p class="listItemText">Votes: ${votes}</p>
+      <p class="listItemText">Average Cost For Two: $${cost}</p>
     </li>
     `;
-  $(".jsList").append(htmlString);
+  //$(".jsList").append(htmlString);
+  $(htmlString).appendTo(".jsList").slideDown('1000');
+  //$(".jsItem").html()
 }
 
 function handlZomatoSearch(data){
@@ -98,10 +101,10 @@ function handlZomatoSearch(data){
     const initialVotes = data.restaurants[0].restaurant.user_rating.votes;
     const initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
     const initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
-    let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText,initialVotes);
-
-    renderResult(initialName,initialRating,initialText,initialVotes,0);
-
+    const costForTwo = parseInt(data.restaurants[0].restaurant.average_cost_for_two);
+    let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText, initialVotes,costForTwo);
+    
+    setTimeout(renderResult(initialName,initialRating,initialText,initialVotes,costForTwo,0),5000);
     for(i = 1; i < data.restaurants.length; i++){
       
       const name = data.restaurants[i].restaurant.name;
@@ -110,9 +113,10 @@ function handlZomatoSearch(data){
       const votes = data.restaurants[i].restaurant.user_rating.votes;
       const lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
       const long = parseFloat(data.restaurants[i].restaurant.location.longitude);
-      addMarker(lat,long,map1,name,rating,text,votes,i);
-      renderResult(name,rating,text,votes,i);
-
+      const cost = parseInt(data.restaurants[i].restaurant.average_cost_for_two);
+      addMarker(lat,long,map1,name,rating,text,votes,cost,i);
+      
+      setTimeout(renderResult(name,rating,text,votes,cost,i),5000);
     }
   }
 }
@@ -147,6 +151,7 @@ function checkState(arr,stateStr){
       return i;
     }
   }
+  return false;
 }
 
 function handleZomatoCity(data){
@@ -156,9 +161,13 @@ function handleZomatoCity(data){
     console.log(data);
     console.log(data.location_suggestions[0].id);
     const userState = $(".jsState").val().toLowerCase();
-    const index = checkState(data.location_suggestions, userState);
+    let index = checkState(data.location_suggestions, userState);
+    if (index === false){
+      apiError();
+      return 0;
+    }
     const cityId = data.location_suggestions[index].id;
-    console.log(data.location_suggestions[index].id);
+    //console.log(data.location_suggestions[index].id);
     const cuisineType = $(".jsFoodType").val();
     const cuisineDropDown = $(".jsCuisineSelect").val();
     const num = $(".jsResults").val();
@@ -209,7 +218,7 @@ function callGeocode(){
   geocoder.geocode({'address': "t6m2w9"},handleGeocode);
 }
 */
-function initMap(latitude,longitude,name,rating,text,votes) {
+function initMap(latitude,longitude,name,rating,text,votes,cost) {
   let uluru = {lat: latitude, lng: longitude};
   let map = new google.maps.Map(document.getElementById('map'), {
     zoom: 15,
@@ -225,6 +234,7 @@ function initMap(latitude,longitude,name,rating,text,votes) {
     content: `<h2 class="markerHeading">${name}</h2>
     <p>Rating: ${rating} "${text}"</p>
     <p>Votes: ${votes}</p>
+    <p>Average Cost For Two: $${cost}</p>
     `
   });
 
@@ -237,7 +247,7 @@ function initMap(latitude,longitude,name,rating,text,votes) {
   return map
 }
 
-function addMarker(latitude,longitude,map,name,rating,text,votes,index){
+function addMarker(latitude,longitude,map,name,rating,text,votes,cost,index){
   let labelNum = index + 1;
   labelNum = labelNum.toString();
   const uluru = {lat: latitude, lng: longitude};
@@ -250,6 +260,7 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,index){
     content: `<h2 class="markerHeading">${name}</h2>
     <p>Rating: ${rating} "${text}"</p>
     <p>Votes: ${votes}</p>
+    <p>Average Cost For Two: $${cost}</p>
     `
   });
 
@@ -268,11 +279,12 @@ function submitClicked(){
     const charCheck = checkInput(userCity);
     const cuisineType = $(".jsFoodType").val();
     const checkCharCuisine = checkInput(cuisineType);
+    const checkCharState = checkInput($(".jsState").val());
     const cuisineDropDown = $(".jsCuisineSelect").val();
     if ((userCity === "" || cuisineType === "") && cuisineDropDown == 0){
       errorHandleEmpty();
     }
-    else if (charCheck === false || checkCharCuisine === false){
+    else if (charCheck === false || checkCharCuisine === false || checkCharState === false){
       errorHandleChar();
     }
     else{

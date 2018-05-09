@@ -1,6 +1,11 @@
 html, body{
 	height:100%;
 	font-size: 25px;
+	font-family: 'Iceland', cursive;
+
+}
+.resultItem{
+	display: none;
 }
 #map{
 	width:100%;

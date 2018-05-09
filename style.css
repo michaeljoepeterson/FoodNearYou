@@ -1,8 +1,10 @@
-html, body{
-	height:100%;
+html{
+	height: 100%
+}
+body{
 	font-size: 25px;
 	font-family: 'Iceland', cursive;
-
+	background: url("assets/image1.jpeg");
 }
 /*
 .resultItem{
@@ -50,7 +52,16 @@ html, body{
 }
 .submitButton{
 	min-width: 15%;
-	height: 3vh;
+	min-height: 3vh;
+	font-size: 25px;
+	background: none;
+	font-family: 'Iceland', cursive;
+	border: 1px solid black;
+}
+.submitButton:hover{
+	cursor: pointer;
+	background: black;
+	color: white;
 }
 .centerList {
   text-align: center;

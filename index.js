@@ -79,7 +79,6 @@ function handlZomatoSearch(data){
     $(".loader").css("display","none");
     markerArray = [];
     infoWindowArray = [];
-    console.log(data);
     const initialName = data.restaurants[0].restaurant.name;
     const initialRating = data.restaurants[0].restaurant.user_rating.aggregate_rating;
     const initialText = data.restaurants[0].restaurant.user_rating.rating_text;

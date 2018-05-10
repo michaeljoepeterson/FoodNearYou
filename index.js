@@ -3,28 +3,20 @@ const zomatoKey = "a0f05595eda479ba1030417f5224deca";
 let infoWindowArray = [];
 let markerArray = [];
 let mapObj;
-//add input field for state/province and functions for them
-//move around cuisne inputs/clarify for user which input takes precidence
-//on error set map to 0,0
-//add cost to markers/results
+//checks input for illegal characters
 function checkInput(strToCheck){
   const legalChars = /^[a-zA-z0-9.,?!;\s']*$/;
-  //console.log(legalChars.test(strToCheck));
   return legalChars.test(strToCheck)
 }
-
-
+//used to remove map markers
 function setMapOnAll(map) {
   console.log(markerArray);
   for (var i = 0; i < markerArray.length; i++) {
-    console.log(i);
     markerArray[i].setMap(map);
   }
 }
-
+//various error functions that will display alerts 
 function apiError(){
- //let msgHtml = `<p>An error occured</p>`;
-  //$(".jsError").html(msgHtml); 
   const msg = "An error occured no results to display"
   alert(msg);
   $(".loader").css("display","none");
@@ -32,38 +24,29 @@ function apiError(){
 }
 
 function errorHandleEmpty(){
-  //let msgHtml = `<p>Please fill in all fields</p>`;
-  //$(".jsError").html(msgHtml); 
   const msg = "Please fill in all fields";
   $(".loader").css("display","none");
   alert(msg);
 }
 
 function errorHandleChar(){
-  //let msgHtml = `<p>Illegal character, please check your input</p>`;
-  //$(".jsError").html(msgHtml); 
   const msg = "Illegal character, please check your input";
   $(".loader").css("display","none");
   alert(msg);
-  //setMapOnAll(null);
 }
+//displays info windows for a selected marker
 function displayInfo(index){
   const map = infoWindowArray[index].getMap();
     if (map !== null && typeof map !== "undefined"){
       infoWindowArray[index].close();
-      //console.log("close");
-        //onVal = true;
     }
     else{
       infoWindowArray[index].open(mapObj,markerArray[index]);
-        //onVal = false
-      //console.log("open");
     }
     mapObj.setZoom(15);
     mapObj.panTo(markerArray[index].position);
-    //console.log(map);
 }
-
+//handles when a user clicks on a list item 
 function resultClicked(){
   $(".jsList").on("click",".jsItem", function(event){
     event.stopImmediatePropagation();
@@ -85,11 +68,9 @@ function renderResult(name,rating,text,votes,cost,index){
       <p class="listItemText">Average Cost For Two: $${cost}</p>
     </li>
     `;
-  $(".jsList").append(htmlString);
-  //$(htmlString).appendTo(".jsList").slideDown('1000');
-  
+  $(".jsList").append(htmlString); 
 }
-
+//function that handles the data from the zomato search api
 function handlZomatoSearch(data){
   if (data.restaurants.length === 0){
       apiError();
@@ -108,7 +89,6 @@ function handlZomatoSearch(data){
     const costForTwo = parseInt(data.restaurants[0].restaurant.average_cost_for_two);
     let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText, initialVotes,costForTwo);
     renderResult(initialName,initialRating,initialText,initialVotes,costForTwo,0);
-    //setTimeout(renderResult(initialName,initialRating,initialText,initialVotes,costForTwo,0),5000);
     for(i = 1; i < data.restaurants.length; i++){
       
       const name = data.restaurants[i].restaurant.name;
@@ -120,7 +100,6 @@ function handlZomatoSearch(data){
       const cost = parseInt(data.restaurants[i].restaurant.average_cost_for_two);
       addMarker(lat,long,map1,name,rating,text,votes,cost,i);
       renderResult(name,rating,text,votes,cost,i);
-      //setTimeout(renderResult(name,rating,text,votes,cost,i),5000);
     }
   }
 }
@@ -146,24 +125,21 @@ function callZomatoSearch(cityId, searchWord, numResults,callback){
   };
   $.ajax(settings);  
 }
-
+//checks if a state/province is in the results from the zomato api
 function checkState(arr,stateStr){
   for(i = 0; i < arr.length;i++){
     let checkState = arr[i].state_name.toLowerCase();
     if(checkState.includes(stateStr)){
-      console.log(i);
       return i;
     }
   }
   return false;
 }
-
+//handle data from the first call to the zomato api city portion
 function handleZomatoCity(data){
   if (data.location_suggestions.length === 0){
     apiError();
   }else{
-    console.log(data);
-    console.log(data.location_suggestions[0].id);
     const userState = $(".jsState").val().toLowerCase();
     let index = checkState(data.location_suggestions, userState);
     if (index === false){
@@ -171,7 +147,6 @@ function handleZomatoCity(data){
       return 0;
     }
     const cityId = data.location_suggestions[index].id;
-    //console.log(data.location_suggestions[index].id);
     const cuisineType = $(".jsFoodType").val();
     const cuisineDropDown = $(".jsCuisineSelect").val();
     const num = $(".jsResults").val();
@@ -180,15 +155,12 @@ function handleZomatoCity(data){
       errorHandleEmpty();
     }
     else if(cuisineType === "" && cuisineDropDown != 0){
-      //console.log("test");
-      //clearError();
       callZomatoSearch(cityId,cuisineDropDown,num,handlZomatoSearch);
     }
     else if (checkChar === false){
       errorHandleChar();
     }
     else{
-      //clearError();
       $(".jsCuisineSelect").val("0");
       callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
     }
@@ -211,17 +183,7 @@ function callZomatoCity(city, callback){
   };
   $.ajax(settings);
 }
-/*
-function handleGeocode(results, status){
-  console.log(results,status);
-}
-
-function callGeocode(){
-  let geocoder = new google.maps.Geocoder();
-
-  geocoder.geocode({'address': "t6m2w9"},handleGeocode);
-}
-*/
+//initialize google maps with the first marker from the restaurants returned by the zomato api
 function initMap(latitude,longitude,name,rating,text,votes,cost) {
   let uluru = {lat: latitude, lng: longitude};
   let map = new google.maps.Map(document.getElementById('map'), {
@@ -250,7 +212,7 @@ function initMap(latitude,longitude,name,rating,text,votes,cost) {
   mapObj = map;
   return map
 }
-
+//add the next markers from the restaurants returned by the zomato api
 function addMarker(latitude,longitude,map,name,rating,text,votes,cost,index){
   let labelNum = index + 1;
   labelNum = labelNum.toString();
@@ -274,13 +236,12 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,cost,index){
   infoWindowArray.push(infowindow);
   markerArray.push(marker);
 }
-
+//handle the submit button click
 function submitClicked(){
   $(".submitForm").submit(function(event){
     $(".loader").css("display","initial");
     event.preventDefault();
     const userCity = $(".jsCity").val();
-    console.log(markerArray);
     const charCheck = checkInput(userCity);
     const cuisineType = $(".jsFoodType").val();
     const checkCharCuisine = checkInput(cuisineType);

@@ -24,4 +24,8 @@ Zomato API and Google Maps API
 
 ## Created by 
 
+<<<<<<< HEAD
 Michael Peterson
+=======
+Michael Peterson
+>>>>>>> f82fdaa9e09700ade74d82f6a22e9a9710df4433

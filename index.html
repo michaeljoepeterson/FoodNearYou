@@ -35,7 +35,7 @@
 					<label class="center" for="foodTypeSelect">Select a Cuisine Type:</label>
 				</div>
 				<div class="col-6 center">
-					<select class="jsCuisineSelect center userInput" id="numResults">
+					<select class="jsCuisineSelect center userInput" id="foodTypeSelect">
 					  <option value="0">None</option>
 					  <option value="American">American</option>
 					  <option value="Asian">Asian</option>
@@ -52,13 +52,37 @@
 					  <option value="Vegetarian">Vegetarian</option>
 					</select>
 				</div>
+			</div>
+						<div class="row center">
+				<div class="col-6 center">
+					<label class="center" for="citySelect">Select a City:</label>
+				</div>
+				<div class="col-6 center">
+					<select class="jsCitySelect center userInput" id="citySelect">
+					  <option value="0">None</option>
+					  <option value="Albuquerque">Albuquerque-New Mexico</option>
+					  <option value=" Boston">Boston- Massachusetts</option>
+					  <option value="Calgary">Calgary-Alberta</option>
+					  <option value="Denver">Denver-Colorado</option>
+					  <option value="Edmonton">Edmonton-Alberta</option>
+					  <option value="London">London-England</option>
+					  <option value="New York">New York-New York</option>
+					  <option value="San Diego">San Diego-California</option>
+					  <option value="Vancouver">Vancouver-British Columbia</option>
+					</select>
+				</div>
 			</div>	
 			<div class="row center">
+				<div class="col-12">
+					<p><strong>Or</strong></p>
+				</div>
+			</div>
+			<div class="row center">
 				<div class="col-6 center">	
-					<label for="city">City:</label>
+					<label for="city">Search for a City:</label>
 				</div>
 				<div class="col-6 center">	
-					<input required class="jsCity userInput" type="text" id="city">
+					<input class="jsCity userInput" type="text" id="city">
 				</div>
 			</div>
 			<div class="row center">

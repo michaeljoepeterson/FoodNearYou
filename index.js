@@ -241,19 +241,30 @@ function submitClicked(){
     $(".loader").css("display","initial");
     event.preventDefault();
     const userCity = $(".jsCity").val();
+    const userCitySelect = $(".jsCitySelect").val();
     const charCheck = checkInput(userCity);
     const cuisineType = $(".jsFoodType").val();
     const checkCharCuisine = checkInput(cuisineType);
     const checkCharState = checkInput($(".jsState").val());
     const cuisineDropDown = $(".jsCuisineSelect").val();
-    if ((userCity === "" || cuisineType === "") && cuisineDropDown == 0){
+    if ((userCity === "" || cuisineType === "") && cuisineDropDown == 0 && userCitySelect == 0){
+      errorHandleEmpty();
+    }
+    else if (userCity === "" && userCitySelect == 0){
       errorHandleEmpty();
     }
     else if (charCheck === false || checkCharCuisine === false || checkCharState === false){
       errorHandleChar();
     }
+    else if(userCitySelect != 0){
+      $(".jsList").empty();
+      $(".jsCity").val("");
+      $(".jsState").val("");
+      callZomatoCity(userCitySelect,handleZomatoCity);
+    }
     else{
       $(".jsList").empty();
+
       //clearError();
       callZomatoCity(userCity,handleZomatoCity);
     }

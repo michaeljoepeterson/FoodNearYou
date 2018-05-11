@@ -17,7 +17,7 @@ function setMapOnAll(map) {
 }
 //various error functions that will display alerts 
 function apiError(){
-  const msg = "An error occured no results to display"
+  const msg = "No results to display"
   alert(msg);
   $(".loader").css("display","none");
   setMapOnAll(null);

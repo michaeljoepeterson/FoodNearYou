@@ -2,6 +2,7 @@ const endUrl = "https://developers.zomato.com/api/v2.1/";
 const zomatoKey = "a0f05595eda479ba1030417f5224deca";
 let infoWindowArray = [];
 let markerArray = [];
+let addressArray = [];
 let mapObj;
 //checks input for illegal characters
 function checkInput(strToCheck){
@@ -14,6 +15,10 @@ function setMapOnAll(map) {
   for (var i = 0; i < markerArray.length; i++) {
     markerArray[i].setMap(map);
   }
+}
+function addressError(){
+  const msg = "No address available"
+  alert(msg);
 }
 //various error functions that will display alerts 
 function apiError(){
@@ -33,6 +38,26 @@ function errorHandleChar(){
   const msg = "Illegal character, please check your input";
   $(".loader").css("display","none");
   alert(msg);
+}
+function mapSelector(){
+  $(".jsList").on("click",".jsGoogleLink",function(event){
+      event.stopImmediatePropagation();
+      const index = $(this).parent().attr("data-item-index");
+      const address = addressArray[index];
+      console.log(index);
+      console.log(addressArray[index]);
+      if(addressArray[index] === ""){
+        addressError();
+        return 0;
+      }
+      if((navigator.platform.indexOf("iPhone") != -1)||(navigator.platform.indexOf("iPad") != -1)||(navigator.platform.indexOf("iPod") != -1)){
+        window.open(`maps://maps.google.com/maps?daddr=${address}>&amp;ll=`);
+    }
+    else{
+      window.open(`https://maps.google.com/maps?daddr=${address}&amp;ll=`);
+    }
+  });
+  
 }
 //displays info windows for a selected marker
 function displayInfo(index){
@@ -58,14 +83,71 @@ function resultClicked(){
     }, 300);
   });
 }
+//initialize google maps with the first marker from the restaurants returned by the zomato api
+function initMap(latitude,longitude,name,rating,text,votes,cost,address) {
+  let uluru = {lat: latitude, lng: longitude};
+  let map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 15,
+    center: uluru
+  });
+  let marker = new google.maps.Marker({
+    position: uluru,
+    map: map,
+    label: "1"
+  });
 
-function renderResult(name,rating,text,votes,cost,index){
+  let infowindow = new google.maps.InfoWindow({
+    content: `<h2 class="markerHeading">${name}</h2>
+    <p>Rating: ${rating} "${text}"</p>
+    <p>Votes: ${votes}</p>
+    <p>Average Cost For Two: $${cost}</p>
+    <p>Address: ${address}</p>
+    `
+  });
+
+  marker.addListener('click', function() {
+    infowindow.open(map, marker);
+  });
+  infoWindowArray.push(infowindow);
+  markerArray.push(marker);
+  mapObj = map;
+  return map
+}
+//add the next markers from the restaurants returned by the zomato api
+function addMarker(latitude,longitude,map,name,rating,text,votes,cost,address,index){
+  let labelNum = index + 1;
+  labelNum = labelNum.toString();
+  const uluru = {lat: latitude, lng: longitude};
+  let marker = new google.maps.Marker({
+    position: uluru,
+    map: map,
+    label: labelNum
+  });  
+  var infowindow = new google.maps.InfoWindow({
+    content: `<h2 class="markerHeading">${name}</h2>
+    <p>Rating: ${rating} "${text}"</p>
+    <p>Votes: ${votes}</p>
+    <p>Average Cost For Two: $${cost}</p>
+    <p>Address: ${address}</p>
+    `
+  });
+
+  marker.addListener('click', function() {
+    infowindow.open(map, marker);
+  });
+  infoWindowArray.push(infowindow);
+  markerArray.push(marker);
+}
+
+function renderResult(name,rating,text,votes,cost, address,index){
   const htmlString = `
     <li class="resultItem jsItem" data-item-index="${index}">
       <h3 class="listItemName">${name}</h3>
       <p class="listItemText">Rating: ${rating} "${text}"</p>
       <p class="listItemText">Votes: ${votes}</p>
       <p class="listItemText">Average Cost For Two: $${cost}</p>
+      <p class="listItemText">Address: ${address}</p>
+      <a class="jsGoogleLink">Open In Google Maps</a>
     </li>
     `;
   $(".jsList").append(htmlString); 
@@ -79,6 +161,7 @@ function handlZomatoSearch(data){
     $(".loader").css("display","none");
     markerArray = [];
     infoWindowArray = [];
+    addressArray = [];
     const initialName = data.restaurants[0].restaurant.name;
     const initialRating = data.restaurants[0].restaurant.user_rating.aggregate_rating;
     const initialText = data.restaurants[0].restaurant.user_rating.rating_text;
@@ -86,8 +169,10 @@ function handlZomatoSearch(data){
     const initialLat = parseFloat(data.restaurants[0].restaurant.location.latitude);
     const initialLong = parseFloat(data.restaurants[0].restaurant.location.longitude);
     const costForTwo = parseInt(data.restaurants[0].restaurant.average_cost_for_two);
-    let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText, initialVotes,costForTwo);
-    renderResult(initialName,initialRating,initialText,initialVotes,costForTwo,0);
+    const initialAddress = data.restaurants[0].restaurant.location.address;
+    addressArray.push(initialAddress);
+    let map1 = initMap(initialLat, initialLong,initialName,initialRating,initialText, initialVotes,costForTwo,initialAddress);
+    renderResult(initialName,initialRating,initialText,initialVotes,costForTwo,initialAddress,0);
     for(i = 1; i < data.restaurants.length; i++){
       
       const name = data.restaurants[i].restaurant.name;
@@ -97,8 +182,10 @@ function handlZomatoSearch(data){
       const lat = parseFloat(data.restaurants[i].restaurant.location.latitude);
       const long = parseFloat(data.restaurants[i].restaurant.location.longitude);
       const cost = parseInt(data.restaurants[i].restaurant.average_cost_for_two);
-      addMarker(lat,long,map1,name,rating,text,votes,cost,i);
-      renderResult(name,rating,text,votes,cost,i);
+      const address = data.restaurants[i].restaurant.location.address;
+      addressArray.push(address);
+      addMarker(lat,long,map1,name,rating,text,votes,cost,address,i);
+      renderResult(name,rating,text,votes,cost,address,i);
     }
   }
 }
@@ -182,59 +269,6 @@ function callZomatoCity(city, callback){
   };
   $.ajax(settings);
 }
-//initialize google maps with the first marker from the restaurants returned by the zomato api
-function initMap(latitude,longitude,name,rating,text,votes,cost) {
-  let uluru = {lat: latitude, lng: longitude};
-  let map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 15,
-    center: uluru
-  });
-  let marker = new google.maps.Marker({
-    position: uluru,
-    map: map,
-    label: "1"
-  });
-
-  let infowindow = new google.maps.InfoWindow({
-    content: `<h2 class="markerHeading">${name}</h2>
-    <p>Rating: ${rating} "${text}"</p>
-    <p>Votes: ${votes}</p>
-    <p>Average Cost For Two: $${cost}</p>
-    `
-  });
-
-  marker.addListener('click', function() {
-    infowindow.open(map, marker);
-  });
-  infoWindowArray.push(infowindow);
-  markerArray.push(marker);
-  mapObj = map;
-  return map
-}
-//add the next markers from the restaurants returned by the zomato api
-function addMarker(latitude,longitude,map,name,rating,text,votes,cost,index){
-  let labelNum = index + 1;
-  labelNum = labelNum.toString();
-  const uluru = {lat: latitude, lng: longitude};
-  let marker = new google.maps.Marker({
-    position: uluru,
-    map: map,
-    label: labelNum
-  });  
-  var infowindow = new google.maps.InfoWindow({
-    content: `<h2 class="markerHeading">${name}</h2>
-    <p>Rating: ${rating} "${text}"</p>
-    <p>Votes: ${votes}</p>
-    <p>Average Cost For Two: $${cost}</p>
-    `
-  });
-
-  marker.addListener('click', function() {
-    infowindow.open(map, marker);
-  });
-  infoWindowArray.push(infowindow);
-  markerArray.push(marker);
-}
 //handle the submit button click
 function submitClicked(){
   $(".submitForm").submit(function(event){
@@ -265,19 +299,11 @@ function submitClicked(){
     else{
       $(".jsList").empty();
 
-      //clearError();
       callZomatoCity(userCity,handleZomatoCity);
     }
-    //console.log(infoWindowArray);
-    //console.log(markerArray);
     resultClicked();
-    /*
-    let map1 = initMap(53.46927239999999, -113.63656679999997);
-    addMarker(53.5176707,-113.4995439,map1)
-    addMarker(53.552364,-113.4961727,map1)
-    addMarker(53.518218,-113.5007353,map1)
-    console.log($(".jsResults").val());
-    */
+    mapSelector();
+
   });
 }
 $(submitClicked)

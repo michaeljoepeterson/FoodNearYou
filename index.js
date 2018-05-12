@@ -52,8 +52,6 @@ function mapSelector(){
       event.stopImmediatePropagation();
       const index = $(this).parent().attr("data-item-index");
       const address = addressArray[index];
-      console.log(index);
-      console.log(addressArray[index]);
       if(addressArray[index] === ""){
         addressError();
         return 0;

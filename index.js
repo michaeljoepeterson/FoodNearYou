@@ -39,6 +39,14 @@ function errorHandleChar(){
   $(".loader").css("display","none");
   alert(msg);
 }
+function checkBrowser(address){
+  if((navigator.platform.indexOf("iPhone") != -1)||(navigator.platform.indexOf("iPad") != -1)||(navigator.platform.indexOf("iPod") != -1)){
+        return `maps://maps.google.com/maps?daddr=${address}>&amp;ll=`;
+    }
+    else{
+      return `https://maps.google.com/maps?daddr=${address}&amp;ll=`;
+    }
+}
 function mapSelector(){
   $(".jsList").on("click",".jsGoogleLink",function(event){
       event.stopImmediatePropagation();
@@ -95,13 +103,14 @@ function initMap(latitude,longitude,name,rating,text,votes,cost,address) {
     map: map,
     label: "1"
   });
-
+  const browserAddress = checkBrowser(address);
   let infowindow = new google.maps.InfoWindow({
     content: `<h2 class="markerHeading">${name}</h2>
     <p>Rating: ${rating} "${text}"</p>
     <p>Votes: ${votes}</p>
     <p>Average Cost For Two: $${cost}</p>
     <p>Address: ${address}</p>
+    <a target="_blank" href="${browserAddress}">Open In Google Maps</a>
     `
   });
 
@@ -123,12 +132,14 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,cost,address,in
     map: map,
     label: labelNum
   });  
+  const browserAddress = checkBrowser(address);
   var infowindow = new google.maps.InfoWindow({
     content: `<h2 class="markerHeading">${name}</h2>
     <p>Rating: ${rating} "${text}"</p>
     <p>Votes: ${votes}</p>
     <p>Average Cost For Two: $${cost}</p>
     <p>Address: ${address}</p>
+    <a target="_blank" href="${browserAddress}">Open In Google Maps</a>
     `
   });
 

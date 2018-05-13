@@ -121,7 +121,15 @@ function resultButtonClicked(){
   })
   ;
 }
-
+function checkCharacters(name){
+  if (name.length >= 30){
+    const nameArr = name.split(" ")
+    return nameArr[0];
+  }
+  else{
+    return name;
+  }
+}
 //initialize google maps with the first marker from the restaurants returned by the zomato api
 function initMap(latitude,longitude,name,rating,text,votes,cost,address) {
   let uluru = {lat: latitude, lng: longitude};
@@ -134,9 +142,10 @@ function initMap(latitude,longitude,name,rating,text,votes,cost,address) {
     map: map,
     label: "1"
   });
+  const newName = checkCharacters(name);
   const browserAddress = checkBrowser(address);
   let infowindow = new google.maps.InfoWindow({
-    content: `<h2 class="markerHeading">${name}</h2>
+    content: `<h2 class="markerHeading">${newName}</h2>
     <p>Rating: ${rating} "${text}"</p>
     <p>Votes: ${votes}</p>
     <p>Average Cost For Two: $${cost}</p>
@@ -164,9 +173,10 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,cost,address,in
     map: map,
     label: labelNum
   });  
+  const newName = checkCharacters(name);
   const browserAddress = checkBrowser(address);
-  var infowindow = new google.maps.InfoWindow({
-    content: `<h2 class="markerHeading">${name}</h2>
+  let infowindow = new google.maps.InfoWindow({
+    content: `<h2 class="markerHeading">${newName}</h2>
     <p>Rating: ${rating} "${text}"</p>
     <p>Votes: ${votes}</p>
     <p>Average Cost For Two: $${cost}</p>

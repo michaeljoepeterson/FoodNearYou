@@ -19,10 +19,10 @@
 			<h2 class="center">Choose One</h2>
 			<div class="row center">
 				<div class="col-6">
-					<label for="foodType">Search For Food:</label>
+					<label for="foodType" aria-live="polite">Search For Food:</label>
 				</div>
 				<div class="col-6">
-					<input class="jsFoodType userInput" type="text" id="foodType">
+					<input class="jsFoodType userInput" type="text" id="foodType" aria-live="polite">
 				</div>
 			</div>
 			<div class="row center">
@@ -32,10 +32,10 @@
 			</div>
 			<div class="row center">
 				<div class="col-6 center">
-					<label class="center" for="foodTypeSelect">Select a Cuisine Type:</label>
+					<label class="center" for="foodTypeSelect" aria-live="polite">Select a Cuisine Type:</label>
 				</div>
 				<div class="col-6 center">
-					<select class="jsCuisineSelect center userInput" id="foodTypeSelect">
+					<select class="jsCuisineSelect center userInput" id="foodTypeSelect" aria-live="polite">
 					  <option value="0">None</option>
 					  <option value="American">American</option>
 					  <option value="Asian">Asian</option>
@@ -53,12 +53,12 @@
 					</select>
 				</div>
 			</div>
-						<div class="row center">
+			<div class="row center">
 				<div class="col-6 center">
-					<label class="center" for="citySelect">Select a City:</label>
+					<label class="center" for="citySelect" aria-live="polite">Select a City:</label>
 				</div>
 				<div class="col-6 center">
-					<select class="jsCitySelect center userInput" id="citySelect">
+					<select class="jsCitySelect center userInput" id="citySelect" aria-live="polite">
 					  <option value="0">None</option>
 					  <option value="Albuquerque">Albuquerque-New Mexico</option>
 					  <option value=" Boston">Boston- Massachusetts</option>
@@ -79,26 +79,26 @@
 			</div>
 			<div class="row center">
 				<div class="col-6 center">	
-					<label for="city">Search for a City:</label>
+					<label for="city" aria-live="polite">Search for a City:</label>
 				</div>
 				<div class="col-6 center">	
-					<input class="jsCity userInput" type="text" id="city">
+					<input class="jsCity userInput" type="text" id="city" aria-live="polite">
 				</div>
 			</div>
 			<div class="row center">
 				<div class="col-6 center">
-					<label for="state">State/Province:</label>
+					<label for="state" aria-live="polite">State/Province:</label>
 				</div>
 				<div class="col-6 center">	
-					<input class="jsState userInput" type="text" id="state">
+					<input class="jsState userInput" type="text" id="state" aria-live="polite">
 				</div>
 			</div>
 			<div class="row center">
 				<div class="col-6 center">
-					<label for="numResults">Results:</label>
+					<label for="numResults" aria-live="polite">Results:</label>
 				</div>
 				<div class="col-6 center">	
-					<select class="jsResults userInput" id="numResults">
+					<select class="jsResults userInput" id="numResults" aria-live="polite">
 					  <option value="5">5</option>
 					  <option value="10">10</option>
 					  <option value="15">15</option>
@@ -112,7 +112,7 @@
 		</form>
 		<div id="map"></div>
 		<div class="center">
-			<ol class="jsList centerList">
+			<ol class="jsList centerList" aria-live="assertive" hidden>
 			</ol>
 		</div>
 	</main>

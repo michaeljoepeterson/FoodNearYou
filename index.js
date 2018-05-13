@@ -4,11 +4,13 @@ let infoWindowArray = [];
 let markerArray = [];
 let addressArray = [];
 let mapObj;
+
 //checks input for illegal characters
 function checkInput(strToCheck){
   const legalChars = /^[a-zA-z0-9.,?!;\s']*$/;
   return legalChars.test(strToCheck)
 }
+
 //used to remove map markers
 function setMapOnAll(map) {
   console.log(markerArray);
@@ -16,13 +18,15 @@ function setMapOnAll(map) {
     markerArray[i].setMap(map);
   }
 }
+
 function addressError(){
-  const msg = "No address available"
+  const msg = "No address available";
   alert(msg);
 }
+
 //various error functions that will display alerts 
 function apiError(){
-  const msg = "No results to display"
+  const msg = "No results to display";
   alert(msg);
   $(".loader").css("display","none");
   setMapOnAll(null);
@@ -39,6 +43,7 @@ function errorHandleChar(){
   $(".loader").css("display","none");
   alert(msg);
 }
+
 function checkBrowser(address){
   if((navigator.platform.indexOf("iPhone") != -1)||(navigator.platform.indexOf("iPad") != -1)||(navigator.platform.indexOf("iPod") != -1)){
         return `maps://maps.google.com/maps?daddr=${address}>&amp;ll=`;
@@ -47,10 +52,12 @@ function checkBrowser(address){
       return `https://maps.google.com/maps?daddr=${address}&amp;ll=`;
     }
 }
+
 function mapSelector(){
   $(".jsList").on("click",".jsGoogleLink",function(event){
+      event.preventDefault();
       event.stopImmediatePropagation();
-      const index = $(this).parent().attr("data-item-index");
+      const index = $(this).attr("data-item-index");
       const address = addressArray[index];
       if(addressArray[index] === ""){
         addressError();
@@ -63,8 +70,8 @@ function mapSelector(){
       window.open(`https://maps.google.com/maps?daddr=${address}&amp;ll=`);
     }
   });
-  
 }
+
 //displays info windows for a selected marker
 function displayInfo(index){
   const map = infoWindowArray[index].getMap();
@@ -77,18 +84,44 @@ function displayInfo(index){
     mapObj.setZoom(15);
     mapObj.panTo(markerArray[index].position);
 }
-//handles when a user clicks on a list item 
-function resultClicked(){
-  $(".jsList").on("click",".jsItem", function(event){
-    event.stopImmediatePropagation();
-    const itemIndex = $(this).attr("data-item-index");
-    displayInfo(itemIndex);
-    const offset = 5;
-    $('html, body').animate({
-        scrollTop: $("#map").offset().top + offset
-    }, 300);
+
+function foodInputClick(){
+  $(".jsFoodType").click(function(event){
+    $(".jsCuisineSelect").val("0");  
   });
 }
+
+function foodInputSelect(){
+  $(".jsCuisineSelect").click(function(event){
+    $(".jsFoodType").val("");  
+  });
+}
+
+function cityInputClick(){
+  $(".jsCity").click(function(event){
+    $(".jsCitySelect").val("0");  
+  });
+}
+
+function cityInputSelect(){
+  $(".jsCitySelect").click(function(event){
+    $(".jsCity").val("");  
+  });
+}
+function resultButtonClicked(){
+    $(".jsList").on("click",".jsListButton", function(event){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const itemIndex = $(this).attr("data-item-index");
+      displayInfo(itemIndex);
+      const offset = 5;
+      $('html, body').animate({
+          scrollTop: $("#map").offset().top + offset
+      }, 300);
+  })
+  ;
+}
+
 //initialize google maps with the first marker from the restaurants returned by the zomato api
 function initMap(latitude,longitude,name,rating,text,votes,cost,address) {
   let uluru = {lat: latitude, lng: longitude};
@@ -120,6 +153,7 @@ function initMap(latitude,longitude,name,rating,text,votes,cost,address) {
   mapObj = map;
   return map
 }
+
 //add the next markers from the restaurants returned by the zomato api
 function addMarker(latitude,longitude,map,name,rating,text,votes,cost,address,index){
   let labelNum = index + 1;
@@ -150,17 +184,22 @@ function addMarker(latitude,longitude,map,name,rating,text,votes,cost,address,in
 
 function renderResult(name,rating,text,votes,cost, address,index){
   const htmlString = `
-    <li class="resultItem jsItem" data-item-index="${index}">
+    <li class="resultItem jsItem" aria-live="assertive">
+      <form>
+      <button class="listButton jsListButton" data-item-index="${index}">
       <h3 class="listItemName">${name}</h3>
       <p class="listItemText">Rating: ${rating} "${text}"</p>
       <p class="listItemText">Votes: ${votes}</p>
       <p class="listItemText">Average Cost For Two: $${cost}</p>
       <p class="listItemText">Address: ${address}</p>
-      <a class="jsGoogleLink">Open In Google Maps</a>
+      <button class="jsGoogleLink listButton" data-item-index="${index}">Open In Google Maps</button>
+      </button>
+      </form>
     </li>
     `;
   $(".jsList").append(htmlString); 
 }
+
 //function that handles the data from the zomato search api
 function handlZomatoSearch(data){
   if (data.restaurants.length === 0){
@@ -168,6 +207,7 @@ function handlZomatoSearch(data){
     }
   else{
     $(".loader").css("display","none");
+    $(".jsList").prop('hidden',false);
     markerArray = [];
     infoWindowArray = [];
     addressArray = [];
@@ -220,6 +260,7 @@ function callZomatoSearch(cityId, searchWord, numResults,callback){
   };
   $.ajax(settings);  
 }
+
 //checks if a state/province is in the results from the zomato api
 function checkState(arr,stateStr){
   for(i = 0; i < arr.length;i++){
@@ -230,6 +271,7 @@ function checkState(arr,stateStr){
   }
   return false;
 }
+
 //handle data from the first call to the zomato api city portion
 function handleZomatoCity(data){
   if (data.location_suggestions.length === 0){
@@ -278,6 +320,7 @@ function callZomatoCity(city, callback){
   };
   $.ajax(settings);
 }
+
 //handle the submit button click
 function submitClicked(){
   $(".submitForm").submit(function(event){
@@ -310,9 +353,15 @@ function submitClicked(){
 
       callZomatoCity(userCity,handleZomatoCity);
     }
-    resultClicked();
+    
     mapSelector();
-
+    resultButtonClicked();
+    
   });
+  foodInputClick();
+  foodInputSelect();
+  cityInputClick();
+  cityInputSelect();
 }
+
 $(submitClicked)

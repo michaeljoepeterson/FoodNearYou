@@ -5,6 +5,9 @@
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<link rel="stylesheet" href="float-grid.css"/>
 	<link href="https://fonts.googleapis.com/css?family=Iceland" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=La+Belle+Aurore" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Abel" rel="stylesheet">
+	<link href="assets/spoon.png" rel="shortcut icon" type="image/x-icon">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	<script type="text/javascript" src="index.js"></script>
@@ -13,10 +16,21 @@
     </script>
 </head>
 <body>
-	<header class="center" role="banner"><h1>Search for Food in Your City</h1></header>
+	<header class="center" role="banner">
+		<div class="row center">
+			<div class="col-4">
+				<img class="headerImg" src="assets/spoon.png">
+			</div>
+			<div class="col-4">
+				<h1>Food Near You</h1>
+			</div>
+			<div class="col-4">
+				<img class="headerImg" src="assets/spoon.png">
+			</div>
+		</div>
+	</header>
 	<main role="main">
 		<form class="submitForm">
-			<h2 class="center">Choose One</h2>
 			<div class="row center">
 				<div class="col-6">
 					<label for="foodType" aria-live="polite">Search For Food:</label>

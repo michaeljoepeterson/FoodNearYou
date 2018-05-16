@@ -202,7 +202,7 @@ function renderResult(name,rating,text,votes,cost, address,index){
       <p class="listItemText">Votes: ${votes}</p>
       <p class="listItemText">Average Cost For Two: $${cost}</p>
       <p class="listItemText">Address: ${address}</p>
-      <button class="jsGoogleLink listButton" data-item-index="${index}">Open In Google Maps</button>
+      <button class="jsGoogleLink listButton googleLink" data-item-index="${index}">Open In Google Maps</button>
       </button>
       </form>
     </li>

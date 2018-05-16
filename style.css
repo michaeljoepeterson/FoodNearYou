@@ -4,14 +4,26 @@ html{
 body{
 	font-size: 25px;
 	font-family: 'Iceland', cursive;
-	background: url("assets/image1.jpeg");
-	background-size: cover;
+	background: linear-gradient(rgba(255, 255, 255, 0.6),rgba(255, 255, 255, 0.6)), url("assets/background2.jpg");
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-attachment: fixed;
+  /*background-attachment: fixed;*/
+  	background-size: cover;
 }
 /*
 .resultItem{
 	display: none;
 }
 */
+header{
+	font-family: 'La Belle Aurore', cursive;
+	font-size: 20px;
+}
+.listItemName{
+	font-family: 'La Belle Aurore', cursive;
+}
+
 .loader {
   position: fixed;
   left: 50%;
@@ -45,6 +57,10 @@ body{
 	font-family: 'Iceland', cursive;
 	width: 100%;
 }
+.googleLink{
+	font-family: 'Abel', sans-serif;
+	color: rgb(63,63,63);
+}
 #map{
 	width:100%;
 	height: 500px;
@@ -63,8 +79,9 @@ body{
 	min-height: 3vh;
 	font-size: 25px;
 	background: none;
-	font-family: 'Iceland', cursive;
+	font-family: 'Abel', sans-serif;
 	border: 1px solid black;
+	color: rgb(63,63,63);
 }
 .submitButton:hover{
 	cursor: pointer;
@@ -72,8 +89,13 @@ body{
 	color: white;
 }
 .centerList {
-  text-align: center;
-  list-style-type: none;
+  	text-align: center;
+  	list-style-type: none;
+}
+
+.headerImg{
+	width: 30%;
+	height: 30%;
 }
 ol{
 	margin:0;
@@ -83,15 +105,10 @@ ol{
 ol li{
 	border-bottom: 1px solid black;
 }
-ol li:hover{
-	cursor: pointer;
-	border: 1px solid black;
-	background-color:rgba(0, 0, 0, 0.2);
-}
 ol li .listButton:hover{
 	cursor: pointer;
 	border: 1px solid black;
-	background-color:rgba(0, 0, 0, 0.2);
+	background-color:rgba(255, 255, 255, 0.8);
 }
 @media only screen and (min-width: 640px){
 	ol{
@@ -100,4 +117,9 @@ ol li .listButton:hover{
 		margin-left: auto;
 		width:50%;
 	}
+
+	body{
+		background-position: 50% 20%;
+	}
+
 }

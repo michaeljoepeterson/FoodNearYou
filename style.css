@@ -92,6 +92,10 @@ header{
   	text-align: center;
   	list-style-type: none;
 }
+.results{
+	height: 500px;
+	overflow: auto;
+}
 
 .headerImg{
 	width: 30%;

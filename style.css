@@ -101,6 +101,9 @@ header{
 	width: 30%;
 	height: 30%;
 }
+.selectDiv{
+	display: none;
+}
 ol{
 	margin:0;
  	padding:0;

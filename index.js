@@ -134,7 +134,7 @@ function checkCharacters(name){
 }
 //initialize google maps with the first marker from the restaurants returned by the zomato api
 function initMap(latitude,longitude,name,rating,text,votes,cost,address) {
-  let uluru = {lat: latitude, lng: longitude};
+  let uluru = {lat: latitude - 0.004, lng: longitude - 0.004};
   let map = new google.maps.Map(document.getElementById('map'), {
     zoom: 15,
     center: uluru

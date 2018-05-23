@@ -28,6 +28,8 @@ function addressError(){
 function apiError(){
   const msg = "No results to display";
   alert(msg);
+  $(".citySelectLabel").css("display","initial");
+  $(".citySelect").css("display","initial");
   $(".loader").css("display","none");
   setMapOnAll(null);
 }
@@ -287,21 +289,11 @@ function handleZomatoCity(data){
   if (data.location_suggestions.length === 0){
     apiError();
   }else{
-
     const cityId = data.location_suggestions[0].id;
     const cuisineType = $(".jsFoodType").val();
     const num = $(".jsResults").val();
     const checkChar = checkInput(cuisineType);
-    if (cuisineType === ""){
-      errorHandleEmpty();
-    }
-
-    else if (checkChar === false){
-      errorHandleChar();
-    }
-    else{
-      callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
-    }
+    callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
   }
 }
 
@@ -343,23 +335,28 @@ function callZomatoCity(city, callback, latitude, longitude){
 function showPosition(position){
 
   callZomatoCity("",handleZomatoCity,position.coords.latitude,position.coords.longitude);
-  console.log(position.coords.latitude);
-  console.log(position.coords.longitude);
 }
 
 function showError(error){
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            console.log("User denied the request for Geolocation.")
+            $(".citySelectLabel").css("display","initial");
+            $(".citySelect").css("display","initial");
             break;
         case error.POSITION_UNAVAILABLE:
-            console.log("Location information is unavailable.")
+            $(".citySelectLabel").css("display","initial");
+            $(".citySelect").css("display","initial");
+            alert("Cannot obtain location info")
             break;
         case error.TIMEOUT:
-            console.log("The request to get user location timed out.")
+            $(".citySelectLabel").css("display","initial");
+            $(".citySelect").css("display","initial");
+            alert("The request to get user location timed out.")
             break;
         case error.UNKNOWN_ERROR:
-            console.log("An unknown error occurred.")
+            $(".citySelectLabel").css("display","initial");
+            $(".citySelect").css("display","initial");
+            alert("An unknown error occurred.")
             break;
     }
     $(".loader").css("display","none");  
@@ -380,6 +377,10 @@ function submitClicked(){
     else if (checkCharCuisine === false){
       errorHandleChar();
     }
+    else if(userCitySelect != 0){
+      $(".jsList").empty();
+      callZomatoCity(userCitySelect,handleZomatoCity);
+    }
     else if(cuisineType !== "" && userCitySelect == 0){  
         $(".jsList").empty();
         if (navigator.geolocation) {
@@ -390,14 +391,6 @@ function submitClicked(){
     }
     else if (userCitySelect == 0){
       errorHandleEmpty();
-    }
-    else if(userCitySelect != 0){
-      $(".jsList").empty();
-      callZomatoCity(userCitySelect,handleZomatoCity);
-    }
-    else{
-      $(".jsList").empty();
-      callZomatoCity(userCity,handleZomatoCity);
     }
     
     mapSelector();

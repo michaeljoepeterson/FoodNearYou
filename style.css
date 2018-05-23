@@ -101,7 +101,7 @@ header{
 	width: 30%;
 	height: 30%;
 }
-.selectDiv{
+.citySelect, .citySelectLabel{
 	display: none;
 }
 ol{

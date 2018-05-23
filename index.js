@@ -287,80 +287,116 @@ function handleZomatoCity(data){
   if (data.location_suggestions.length === 0){
     apiError();
   }else{
-    const userState = $(".jsState").val().toLowerCase();
-    let index = checkState(data.location_suggestions, userState);
-    if (index === false){
-      apiError();
-      return 0;
-    }
-    const cityId = data.location_suggestions[index].id;
+
+    const cityId = data.location_suggestions[0].id;
     const cuisineType = $(".jsFoodType").val();
-    const cuisineDropDown = $(".jsCuisineSelect").val();
     const num = $(".jsResults").val();
     const checkChar = checkInput(cuisineType);
-    if (cuisineType === "" && cuisineDropDown == 0){
+    if (cuisineType === ""){
       errorHandleEmpty();
     }
-    else if(cuisineType === "" && cuisineDropDown != 0){
-      callZomatoSearch(cityId,cuisineDropDown,num,handlZomatoSearch);
-    }
+
     else if (checkChar === false){
       errorHandleChar();
     }
     else{
-      $(".jsCuisineSelect").val("0");
       callZomatoSearch(cityId,cuisineType,num,handlZomatoSearch);
     }
   }
 }
 
-function callZomatoCity(city, callback){
+function callZomatoCity(city, callback, latitude, longitude){
   const newEndPoint = endUrl + "cities";
-  const settings = {
-    url: newEndPoint,
-    headers:{
-      "user-key": zomatoKey
-    },
-    data:{
-      q: city
-    },
-    dataType: 'json',
-    type: "GET",
-    success: callback,
-  };
+  let settings ={};
+  if(latitude === undefined || longitude === undefined){
+    settings = {
+      url: newEndPoint,
+      headers:{
+        "user-key": zomatoKey
+      },
+      data:{
+        q: city
+      },
+      dataType: 'json',
+      type: "GET",
+      success: callback,
+    };
+  }
+  else{
+    settings = {
+      url: newEndPoint,
+      headers:{
+        "user-key": zomatoKey
+      },
+      data:{
+        lat: latitude,
+        lon:longitude
+      },
+      dataType: 'json',
+      type: "GET",
+      success: callback,
+    };
+  }
   $.ajax(settings);
 }
 
+function showPosition(position){
+
+  callZomatoCity("",handleZomatoCity,position.coords.latitude,position.coords.longitude);
+  console.log(position.coords.latitude);
+  console.log(position.coords.longitude);
+}
+
+function showError(error){
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            console.log("User denied the request for Geolocation.")
+            break;
+        case error.POSITION_UNAVAILABLE:
+            console.log("Location information is unavailable.")
+            break;
+        case error.TIMEOUT:
+            console.log("The request to get user location timed out.")
+            break;
+        case error.UNKNOWN_ERROR:
+            console.log("An unknown error occurred.")
+            break;
+    }
+    $(".loader").css("display","none");  
+}
 //handle the submit button click
 function submitClicked(){
   $(".submitForm").submit(function(event){
     $(".loader").css("display","initial");
+
     event.preventDefault();
-    const userCity = $(".jsCity").val();
-    const userCitySelect = $(".jsCitySelect").val();
-    const charCheck = checkInput(userCity);
     const cuisineType = $(".jsFoodType").val();
     const checkCharCuisine = checkInput(cuisineType);
-    const checkCharState = checkInput($(".jsState").val());
-    const cuisineDropDown = $(".jsCuisineSelect").val();
-    if ((userCity === "" || cuisineType === "") && cuisineDropDown == 0 && userCitySelect == 0){
+    const userCitySelect = $(".jsCitySelect").val();
+
+    if (cuisineType === ""){
       errorHandleEmpty();
     }
-    else if (userCity === "" && userCitySelect == 0){
-      errorHandleEmpty();
-    }
-    else if (charCheck === false || checkCharCuisine === false || checkCharState === false){
+    else if (checkCharCuisine === false){
       errorHandleChar();
+    }
+    else if(cuisineType !== "" && userCitySelect == 0){  
+        $(".jsList").empty();
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition,showError);
+         } else {
+          console.log("no location");
+         }
+    }
+    else if (userCitySelect == 0){
+      errorHandleEmpty();
     }
     else if(userCitySelect != 0){
       $(".jsList").empty();
-      $(".jsCity").val("");
-      $(".jsState").val("");
       callZomatoCity(userCitySelect,handleZomatoCity);
     }
     else{
       $(".jsList").empty();
-
       callZomatoCity(userCity,handleZomatoCity);
     }
     

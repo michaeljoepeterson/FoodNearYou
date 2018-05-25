@@ -13,7 +13,6 @@ function checkInput(strToCheck){
 
 //used to remove map markers
 function setMapOnAll(map) {
-  console.log(markerArray);
   for (var i = 0; i < markerArray.length; i++) {
     markerArray[i].setMap(map);
   }
@@ -24,13 +23,29 @@ function addressError(){
   alert(msg);
 }
 
-//various error functions that will display alerts 
-function apiError(){
-  const msg = "No results to display";
+function postalCodeError(){
+  const msg = "Could not find results using postal code/zip code, try selecting a city";
   alert(msg);
   $(".citySelectLabel").css("display","initial");
   $(".citySelect").css("display","initial");
   $(".loader").css("display","none");
+  $(".postalCodeLabel").css("display","none");
+  $(".postalCodeInput").css("display","none");
+  $(".jsPostalCode").val("");
+  $(".jsCitySelect").val(0);
+  setMapOnAll(null);
+}
+//various error functions that will display alerts 
+function apiError(){
+  const msg = "Sorry no results, try selecting a city or checking your spelling";
+  alert(msg);
+  $(".postalCodeLabel").css("display","none");
+  $(".postalCodeInput").css("display","none");
+  $(".citySelectLabel").css("display","initial");
+  $(".citySelect").css("display","initial");
+  $(".loader").css("display","none");
+  $(".jsPostalCode").val("");
+  $(".jsCitySelect").val(0);
   setMapOnAll(null);
 }
 
@@ -110,6 +125,7 @@ function cityInputSelect(){
     $(".jsCity").val("");  
   });
 }
+
 function resultButtonClicked(){
     $(".jsList").on("click",".jsListButton", function(event){
       event.preventDefault();
@@ -123,6 +139,7 @@ function resultButtonClicked(){
   })
   ;
 }
+
 function checkCharacters(name){
   if (name.length >= 30){
     const nameArr = name.split(" ")
@@ -251,6 +268,23 @@ function handlZomatoSearch(data){
   }
 }
 
+function postalCodeCoordinate(postalCode){
+  geocoder = new google.maps.Geocoder();
+  geocoder.geocode( { 'address': postalCode}, function(results, status) {
+      if (status == 'OK') {
+       console.log(results);
+       //const lat = results[0].geometry.bounds.f.f;
+       //const long = results[0].geometry.bounds.b.b;
+       const lat = results[0].geometry.location.lat();
+       const long = results[0].geometry.location.lng();
+       callZomatoCity("",handleZomatoCity,lat,long);
+      } else {
+        //alert('Geocode was not successful for the following reason: ' + status);
+        postalCodeError();
+      }
+    });
+}
+
 function callZomatoSearch(cityId, searchWord, numResults,callback){
   const newEndPoint = endUrl + "search";
   const settings = {
@@ -340,23 +374,39 @@ function showPosition(position){
 function showError(error){
     switch(error.code) {
         case error.PERMISSION_DENIED:
-            $(".citySelectLabel").css("display","initial");
-            $(".citySelect").css("display","initial");
+            $(".postalCodeLabel").css("display","initial");
+            $(".postalCodeInput").css("display","initial");
+            $(".citySelectLabel").css("display","none");
+            $(".citySelect").css("display","none");
+            alert("Cannot obtain location info try entering your postal code/zip code");
+            setMapOnAll(null);
             break;
         case error.POSITION_UNAVAILABLE:
-            $(".citySelectLabel").css("display","initial");
-            $(".citySelect").css("display","initial");
-            alert("Cannot obtain location info")
+            $(".postalCodeLabel").css("display","initial");
+            $(".postalCodeInput").css("display","initial");
+            $(".citySelectLabel").css("display","none");
+            $(".citySelect").css("display","none");
+            $(".jsCitySelect").val(0);
+            alert("Cannot obtain location info");
+            setMapOnAll(null);
             break;
         case error.TIMEOUT:
-            $(".citySelectLabel").css("display","initial");
-            $(".citySelect").css("display","initial");
-            alert("The request to get user location timed out.")
+            $(".postalCodeLabel").css("display","initial");
+            $(".postalCodeInput").css("display","initial");
+            $(".citySelectLabel").css("display","none");
+            $(".citySelect").css("display","none");
+            $(".jsCitySelect").val(0);
+            alert("The request to get user location timed out.");
+            setMapOnAll(null);
             break;
         case error.UNKNOWN_ERROR:
-            $(".citySelectLabel").css("display","initial");
-            $(".citySelect").css("display","initial");
-            alert("An unknown error occurred.")
+            $(".postalCodeLabel").css("display","initial");
+            $(".postalCodeInput").css("display","initial");
+            $(".citySelectLabel").css("display","none");
+            $(".citySelect").css("display","none");
+            $(".jsCitySelect").val(0);
+            alert("An unknown error occurred.");
+            setMapOnAll(null);
             break;
     }
     $(".loader").css("display","none");  
@@ -370,18 +420,26 @@ function submitClicked(){
     const cuisineType = $(".jsFoodType").val();
     const checkCharCuisine = checkInput(cuisineType);
     const userCitySelect = $(".jsCitySelect").val();
-
+    const postalCodeUser = $(".jsPostalCode").val();
+    const checkCharPostalCode = checkInput(postalCodeUser);
     if (cuisineType === ""){
       errorHandleEmpty();
     }
     else if (checkCharCuisine === false){
       errorHandleChar();
     }
+    else if(checkCharPostalCode === false){
+      errorHandleChar();
+    }
+    else if(postalCodeUser !== ""){
+      $(".jsList").empty();
+      postalCodeCoordinate(postalCodeUser);
+    }
     else if(userCitySelect != 0){
       $(".jsList").empty();
       callZomatoCity(userCitySelect,handleZomatoCity);
     }
-    else if(cuisineType !== "" && userCitySelect == 0){  
+    else if(cuisineType !== "" && userCitySelect == 0 && postalCodeUser === ""){  
         $(".jsList").empty();
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(showPosition,showError);
@@ -392,6 +450,10 @@ function submitClicked(){
     else if (userCitySelect == 0){
       errorHandleEmpty();
     }
+    else if (postalCodeUser === ""){
+      errorHandleEmpty();
+    }
+
     
     mapSelector();
     resultButtonClicked();
